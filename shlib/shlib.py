@@ -188,11 +188,27 @@ def chmod(mode, *paths):
         path.chmod(mode)
 
 # ls {{{2
-def ls(*paths, match='*'):
+def ls(*paths, accept='*', reject='\0', only=None, hidden=None):
+    # KSK: I have used '\0' as the default reject pattern because using '' 
+    # generates an exception. I have put in an enhancement request to the 
+    # pathlib team. Hopefully they will fix this.
     """
-    Paths may be files or directories. If path is a file, it is returned if it 
-    matches the glob string. If path is a directory, the items in the directory 
-    if they match the glob string.
+    List paths
+
+    Paths may be files or directories. If path is a file, it is returned.
+    If path is a directory, the items in the directory are returned.
+
+    Args:
+        paths: the paths to list
+        accept: a returned path will match this glob string, use ** to enable 
+            recursion
+        reject: a returned path will not match this glob string
+        only: specifies the type of returned paths, choose from 'file' or 'dir'
+        hidden (bool): specifies whether hidden files should be returned, if 
+            not given hidden files are returned if accept string starts with '.'
+
+    Returns:
+        path generator: iterates through filtered paths
 
     >>> from shlib import *
 
@@ -200,45 +216,62 @@ def ls(*paths, match='*'):
     ['clones.py', 'scripts.py', 'setup.py', 'test.clones.py', 'test.doctests.py']
 
     """
-    discard_dot_files = not match.startswith('.')
+    #
+    # currently there is a bug that causes pathlib.glob('**') to only return 
+    # directories. There has been no attempt to work around this issue.
+    #
+    def acceptable(path):
+        if only == 'file' and not path.is_file():
+            return False
+        if only == 'dir' and not path.is_dir():
+            return False
+        if not retain_hidden and path.name.startswith('.'):
+            return False
+        if path.match(reject):
+            return False
+        return True
+
+    retain_hidden = accept.startswith('.') if hidden is None else hidden
     paths = paths if paths else ['.']
     for path in to_paths(paths):
-        if path.is_file() and path.match(match):
-            yield path
+        if path.is_file() and acceptable(path):
+            if path.match(accept):
+                yield path
         elif path.is_dir():
-            for each in path.glob(match):
-                if not discard_dot_files or not each.name.startswith('.'):
+            for each in path.glob(accept):
+                # glob() supports recursion so use it rather than iterdir()
+                if acceptable(each):
                     yield each
 
 # lsd {{{2
-def lsd(*paths, match='*'):
+def lsd(*args, **kwargs):
     """
-    Path is expected to be a directory. If match is not given, the directory is 
-    listed (minus any dot files). If match is given, it is applied to the items 
-    in the directory and only those items that match are returned.
+    List directories
+
+    Same as ls with only='dir'.
 
     >>> sorted(lsd('.hg*'))
     ['.hg']
 
     """
-    for path in ls(paths, match=match):
-        if path.is_dir():
-            yield path
+    kwargs['only'] = 'dir'
+    for d in ls(*args, **kwargs):
+        yield d
 
 # lsf {{{2
-def lsf(*paths, match='*'):
+def lsf(*args, **kwargs):
     """
-    Path is expected to be a directory. If match is not given, the directory is 
-    listed (minus any dot files). If match is given, it is applied to the items 
-    in the directory and only those items that match are returned.
+    List files
+
+    Same as ls with only='file'.
 
     >>> sorted(lsf('.hg*'))
     ['.hgignore']
 
     """
-    for path in ls(paths, match=match):
-        if path.is_file():
-            yield path
+    kwargs['only'] = 'file'
+    for f in ls(*args, **kwargs):
+        yield f
 
 # Path functions (is_readable, etc.) {{{1
 # is_readable {{{2

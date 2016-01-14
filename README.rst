@@ -40,6 +40,13 @@ accept multiple paths, and those can be specified either as an array or as
 individual arguments. Several of the functions return either a path or 
 a collection of paths. These paths are returned as pathlib paths.
 
+
+Installation
+------------
+
+Use 'pip3 install shlib' to install. Requires Python3.5 or better.
+
+
 System Utility Functions
 ------------------------
 
@@ -375,7 +382,7 @@ These are functions that run a program without capturing their output::
 run and sh block until the program completes, whereas bg and shbg do not. run 
 and bg do not use a shell by default where as sh and shbg do. accept specifies 
 the exit status codes that will be accepted without being treated as being an 
-error. If you specify a simple number, than any code greater than thatvalue is 
+error. If you specify a simple number, than any code greater than that value is 
 treated as an error. If you provide a collection of numbers in a tuple or list, 
 then any code not found in the collection is considered an error.
 
