@@ -25,7 +25,7 @@ def test_lsd_downturn():
     rm(d1)
 
 def test_lsd_endorse():
-    """list a directory with accept constraint"""
+    """list a directory with select constraint"""
     # setup
     d1 = Path('d1')
     mkdir(d1)
@@ -39,7 +39,7 @@ def test_lsd_endorse():
     mkdir(d1d2)
 
     # run test
-    files = lsd(d1, accept='*2')
+    files = lsd(d1, select='*2')
 
     # check
     assert set(str(f) for f in files) == set(['d1/d2'])
@@ -65,7 +65,7 @@ def test_lsd_rissole():
     rm(f1, f2)
 
 def test_lsd_narrow():
-    """list files with accept constraint"""
+    """list files with select constraint"""
     # setup
     f1 = Path('f1')
     touch(f1)
@@ -73,7 +73,7 @@ def test_lsd_narrow():
     touch(f2)
 
     # run test
-    files = lsd(f1, f2, accept='*2')
+    files = lsd(f1, f2, select='*2')
 
     # check
     assert set(str(f) for f in files) == set()
@@ -82,7 +82,7 @@ def test_lsd_narrow():
     rm(f1, f2)
 
 def test_lsd_manicure():
-    """list a directory that contains dot files with accept constraint"""
+    """list a directory that contains dot files with select constraint"""
     # setup
     d1 = Path('d1')
     mkdir(d1)
@@ -105,7 +105,7 @@ def test_lsd_manicure():
     rm(d1)
 
 def test_lsd_island():
-    """list a directory that contains dot files with accept constraint"""
+    """list a directory that contains dot files with select constraint"""
     # setup
     d1 = Path('d1')
     mkdir(d1)
@@ -119,7 +119,7 @@ def test_lsd_island():
     mkdir(d1d2)
 
     # run test
-    files = lsd(d1, accept='.*')
+    files = lsd(d1, select='.*')
 
     # check
     assert set(str(f) for f in files) == set(['d1/.d1', 'd1/.d2'])

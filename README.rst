@@ -212,20 +212,56 @@ List Directory (ls, lsd, lsf)
 
 List a directory::
 
-   ls(path [, match])
-   lsd(path [, match])
-   lsf(path [, match])
+   ls(path, ... [<kwargs>])
+   lsd(path, ... [<kwargs>])
+   lsf(path, ... [<kwargs>])
 
 The first form returns a list of all items found in a directory. The second 
-returns only the directories, and the third returns only the files. The match 
-pattern uses globbing to restrict the items shown. If path is not given, the 
-current working directory is assumed.
+returns only the directories, and the third returns only the files.
+
+One or more paths may be specified using unnamed arguments. The paths may be 
+strings or pathlib paths, or collections of those.  If no paths are not given, 
+the current working directory is assumed.
+
+The remaining arguments must be specified as keyword arguments.
+
+::
+
+   select=<glob-str>
+
+If *select* is specified, an item is returned only if it matches the given 
+pattern.  Using '**' in *select* enables a recursive walk through a directory 
+and all its subdirectories.  Using '**' alone returns only directories whereas 
+'**/*' returns files and directories.
+
+::
+
+   reject=<glob-str>
+
+If *reject* is specified, an item is not returned if it matches the given 
+pattern.
+
+::
+
+   only={'file','dir'}
+
+
+If *only* is specified, it may be either 'file' or 'dir', in which case only 
+items of the corresponding type are returned.
+
+::
+
+    hidden=<bool>
+    
+The value of hidden is a boolean that indicates whether items that begin with 
+'.' are included in the output. If hidden is not specified, hidden items are not 
+included unless *select* begins with '.'.
 
 Examples::
 
-   pyfiles = lsf(match='*.py')
+   pyfiles = lsf(select='*.py')
    subdirs = lsd()
-   tmp_mutt = lsf('/tmp/', match='mutt-*')
+   tmp_mutt = lsf('/tmp/', select='mutt-*')
 
 
 Paths

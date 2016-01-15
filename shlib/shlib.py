@@ -50,7 +50,7 @@ def is_collection(obj):
 
 # to_path {{{2
 def to_path(arg):
-    return Path(arg)
+    return Path(arg).expanduser()
 
 # to_paths {{{2
 def to_paths(args):
@@ -188,10 +188,10 @@ def chmod(mode, *paths):
         path.chmod(mode)
 
 # ls {{{2
-def ls(*paths, accept='*', reject='\0', only=None, hidden=None):
+def ls(*paths, select='*', reject='\0', only=None, hidden=None):
     # KSK: I have used '\0' as the default reject pattern because using '' 
-    # generates an exception. I have put in an enhancement request to the 
-    # pathlib team. Hopefully they will fix this.
+    # generates an exception. I put in an enhancement request to the pathlib 
+    # team to fix this, but it was rejected.
     """
     List paths
 
@@ -200,12 +200,13 @@ def ls(*paths, accept='*', reject='\0', only=None, hidden=None):
 
     Args:
         paths: the paths to list
-        accept: a returned path will match this glob string, use ** to enable 
+        select: a returned path will match this glob string, use ** to enable 
             recursion
         reject: a returned path will not match this glob string
         only: specifies the type of returned paths, choose from 'file' or 'dir'
         hidden (bool): specifies whether hidden files should be returned, if 
-            not given hidden files are returned if accept string starts with '.'
+            not given hidden files are returned if select string starts with 
+            '.'
 
     Returns:
         path generator: iterates through filtered paths
@@ -216,10 +217,6 @@ def ls(*paths, accept='*', reject='\0', only=None, hidden=None):
     ['clones.py', 'scripts.py', 'setup.py', 'test.clones.py', 'test.doctests.py']
 
     """
-    #
-    # currently there is a bug that causes pathlib.glob('**') to only return 
-    # directories. There has been no attempt to work around this issue.
-    #
     def acceptable(path):
         if only == 'file' and not path.is_file():
             return False
@@ -231,14 +228,14 @@ def ls(*paths, accept='*', reject='\0', only=None, hidden=None):
             return False
         return True
 
-    retain_hidden = accept.startswith('.') if hidden is None else hidden
+    retain_hidden = select.startswith('.') if hidden is None else hidden
     paths = paths if paths else ['.']
     for path in to_paths(paths):
         if path.is_file() and acceptable(path):
-            if path.match(accept):
+            if path.match(select):
                 yield path
         elif path.is_dir():
-            for each in path.glob(accept):
+            for each in path.glob(select):
                 # glob() supports recursion so use it rather than iterdir()
                 if acceptable(each):
                     yield each

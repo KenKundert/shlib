@@ -25,7 +25,7 @@ def test_ls_downturn():
     rm(d1)
 
 def test_ls_endorse():
-    """list a directory with accept constraint"""
+    """list a directory with select constraint"""
     # setup
     d1 = Path('d1')
     mkdir(d1)
@@ -39,7 +39,7 @@ def test_ls_endorse():
     mkdir(d1d2)
 
     # run test
-    paths = ls(d1, accept='*2')
+    paths = ls(d1, select='*2')
 
     # check
     assert set(str(f) for f in paths) == set(['d1/d2', 'd1/f2'])
@@ -65,7 +65,7 @@ def test_ls_rissole():
     rm(f1, f2)
 
 def test_ls_narrow():
-    """list files with accept constraint"""
+    """list files with select constraint"""
     # setup
     f1 = Path('f1')
     touch(f1)
@@ -73,7 +73,7 @@ def test_ls_narrow():
     touch(f2)
 
     # run test
-    paths = ls(f1, f2, accept='*2')
+    paths = ls(f1, f2, select='*2')
 
     # check
     assert set(str(f) for f in paths) == set(['f2'])
@@ -82,7 +82,7 @@ def test_ls_narrow():
     rm(f1, f2)
 
 def test_ls_manicure():
-    """list a directory that contains dot files with accept constraint"""
+    """list a directory that contains dot files with select constraint"""
     # setup
     d1 = Path('d1')
     mkdir(d1)
@@ -105,7 +105,7 @@ def test_ls_manicure():
     rm(d1)
 
 def test_ls_island():
-    """list a directory that contains dot files with accept constraint"""
+    """list a directory that contains dot files with select constraint"""
     # setup
     d1 = Path('d1')
     mkdir(d1)
@@ -119,7 +119,7 @@ def test_ls_island():
     mkdir(d1d2)
 
     # run test
-    paths = ls(d1, accept='.*')
+    paths = ls(d1, select='.*')
 
     # check
     assert set(str(f) for f in paths) == set(['d1/.d1', 'd1/.d2', 'd1/.f1', 'd1/.f2'])
@@ -196,33 +196,28 @@ def test_ls_cadge():
     # cleanup
     rm(d1)
 
-# KSK:
-#     this one is commented out because there is a bug that causes 
-#     athlib.glob('**') to return only directories 
-#     (https://bugs.python.org/issue26115)
-# 
-# def test_ls_throaty():
-#     """recursive list of files in directory"""
-#     # setup
-#     d1 = Path('d1')
-#     mkdir(d1)
-#     d1d1 = Path('d1/d1')
-#     mkdir(d1d1)
-#     d1d2 = Path('d1/d2')
-#     mkdir(d1d2)
-#     d1d1f1 = Path('d1/d1/f1')
-#     touch(d1d1f1)
-#     d1d2f2 = Path('d1/d2/f2')
-#     touch(d1d2f2)
-# 
-#     # run test
-#     paths = ls(d1, accept='**', only='file')
-# 
-#     # check
-#     assert set(str(f) for f in paths) == set(['d1/d1/f1', 'd1/d2/f2'])
-# 
-#     # cleanup
-#     rm(d1)
+def test_ls_throaty():
+    """recursive list of files in directory"""
+    # setup
+    d1 = Path('d1')
+    mkdir(d1)
+    d1d1 = Path('d1/d1')
+    mkdir(d1d1)
+    d1d2 = Path('d1/d2')
+    mkdir(d1d2)
+    d1d1f1 = Path('d1/d1/f1')
+    touch(d1d1f1)
+    d1d2f2 = Path('d1/d2/f2')
+    touch(d1d2f2)
+
+    # run test
+    paths = ls(d1, select='**/*', only='file')
+
+    # check
+    assert set(str(f) for f in paths) == set(['d1/d1/f1', 'd1/d2/f2'])
+
+    # cleanup
+    rm(d1)
 
 def test_ls_contrast():
     """recursive list of directories in directory"""
@@ -239,10 +234,35 @@ def test_ls_contrast():
     touch(d1d2f2)
 
     # run test
-    paths = ls(d1, accept='**', only='dir')
+    paths = ls(d1, select='**')
 
     # check
     assert set(str(f) for f in paths) == set(['d1', 'd1/d1', 'd1/d2'])
+
+    # cleanup
+    rm(d1)
+
+def test_ls_abominate():
+    """recursive list of directory"""
+    # setup
+    d1 = Path('d1')
+    mkdir(d1)
+    d1d1 = Path('d1/d1')
+    mkdir(d1d1)
+    d1d2 = Path('d1/d2')
+    mkdir(d1d2)
+    d1d1f1 = Path('d1/d1/f1')
+    touch(d1d1f1)
+    d1d2f2 = Path('d1/d2/f2')
+    touch(d1d2f2)
+
+    # run test
+    paths = ls('.', select='**/*')
+
+    # check
+    assert set(str(f) for f in paths) == set(
+       ['d1', 'd1/d1', 'd1/d2', 'd1/d1/f1', 'd1/d2/f2']
+    )
 
     # cleanup
     rm(d1)
