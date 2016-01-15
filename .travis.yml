@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.5"
+  - "nightly"
+install:
+  - pip install .
+script: 
+  - py.test tests
+deploy:
+    provider: pypi
+    user: shlib
+    on:
+        tags: true
+
+
