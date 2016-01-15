@@ -17,6 +17,9 @@ setup(
     url='https://github.com/kenkundert/shlib',
     license='GPLv3+',
     zip_safe=True,
+    install_requires=[
+        'braceexpand',
+    ],
     keywords=[
         'shlib',
         'pathlib',
