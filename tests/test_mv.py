@@ -1,12 +1,12 @@
-from shlib import Path, mkdir, mv, rm, touch
+from shlib import to_path, mkdir, mv, rm, touch
 import pytest
 
 def test_mv_downturn():
     """rename file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
 
     # run test
     mv(f1, f2)
@@ -21,9 +21,9 @@ def test_mv_downturn():
 def test_mv_endorse():
     """rename file, replacing existing file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
 
     # run test
@@ -39,8 +39,8 @@ def test_mv_endorse():
 def test_mv_ground():
     """rename nonexistent file"""
     # setup
-    f1 = Path('f1')
-    f2 = Path('f2')
+    f1 = to_path('f1')
+    f2 = to_path('f2')
 
     # run test
     with pytest.raises(OSError):
@@ -49,11 +49,11 @@ def test_mv_ground():
 def test_mv_cymbal():
     """move two files to a new directory"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
-    d1 = Path('d2')
+    d1 = to_path('d2')
 
     # run test
     with pytest.raises(OSError):
@@ -65,16 +65,16 @@ def test_mv_cymbal():
 def test_mv_gathering():
     """move file into an existing directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
 
     # run test
     mv(f1, d1)
 
     # check
-    assert Path('d1/f1').is_file()
+    assert to_path('d1/f1').is_file()
     assert not f1.exists()
 
     # cleanup
@@ -83,19 +83,19 @@ def test_mv_gathering():
 def test_mv_quisling():
     """move two files into an existing directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
 
     # run test
     mv(f1, f2, d1)
 
     # check
-    assert Path('d1/f1').is_file()
-    assert Path('d1/f2').is_file()
+    assert to_path('d1/f1').is_file()
+    assert to_path('d1/f2').is_file()
     assert not f1.exists()
     assert not f2.exists()
 
@@ -105,19 +105,19 @@ def test_mv_quisling():
 def test_mv_liaise():
     """move two files into an existing directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
 
     # run test
     mv([f1, f2], d1)
 
     # check
-    assert Path('d1/f1').is_file()
-    assert Path('d1/f2').is_file()
+    assert to_path('d1/f1').is_file()
+    assert to_path('d1/f2').is_file()
     assert not f1.exists()
     assert not f2.exists()
 
@@ -127,10 +127,10 @@ def test_mv_liaise():
 def test_mv_incense():
     """move two files into a nonexistent directory"""
     # setup
-    d1 = Path('d1')
-    f1 = Path('f1')
+    d1 = to_path('d1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
 
     # run test
@@ -143,11 +143,11 @@ def test_mv_incense():
 def test_mv_ruminate():
     """move two files into an existing file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
-    f3 = Path('f2')
+    f3 = to_path('f2')
     touch(f3)
 
     # run test
@@ -160,19 +160,19 @@ def test_mv_ruminate():
 def test_mv_mobilize():
     """move directory into an existing directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
-    f1 = Path('d1/f1')
+    f1 = to_path('d1/f1')
     touch(f1)
-    d2 = Path('d2')
+    d2 = to_path('d2')
     mkdir(d2)
 
     # run test
     mv(d1, d2)
 
     # check
-    assert Path('d2/d1').is_dir()
-    assert Path('d2/d1/f1').is_file()
+    assert to_path('d2/d1').is_dir()
+    assert to_path('d2/d1/f1').is_file()
     assert not d1.exists()
 
     # cleanup
@@ -181,17 +181,17 @@ def test_mv_mobilize():
 def test_mv_swine():
     """rename directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
-    f1 = Path('d1/f1')
+    f1 = to_path('d1/f1')
     touch(f1)
-    d2 = Path('d2')
+    d2 = to_path('d2')
 
     # run test
     mv(d1, d2)
 
     # check
-    assert Path('d2/f1').is_file()
+    assert to_path('d2/f1').is_file()
     assert not d1.exists()
 
     # cleanup

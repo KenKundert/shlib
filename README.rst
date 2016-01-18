@@ -70,7 +70,7 @@ Example:
 
 .. code-block:: python
 
-   >>> from shlib import cartesian_product, cp, ls, lsd, lsf, mkdir, Path, rm, touch
+   >>> from shlib import cartesian_product, cp, ls, lsd, lsf, mkdir, rm, to_path, touch
    >>> testdir = 'testdir'
    >>> rm(testdir)
    >>> mkdir(testdir)
@@ -85,7 +85,7 @@ Example:
    >>> print(sorted(str(f) for f in lsf(testdir)))
    ['testdir/f1', 'testdir/f2', 'testdir/f4']
 
-   >>> dest1 = Path(testdir, 'dest1')
+   >>> dest1 = to_path(testdir, 'dest1')
    >>> mkdir(dest1)
    >>> cp(files, dest1)
    >>> print(sorted(str(f) for f in lsf(dest1)))
@@ -96,13 +96,13 @@ Example:
    ['testdir/dest1/d1', 'testdir/dest1/d2']
 
    >>> f1, f2 = tuple(files)
-   >>> dest2 = Path(testdir, 'dest2')
+   >>> dest2 = to_path(testdir, 'dest2')
    >>> mkdir(dest2)
    >>> cp(f1, f2, dest2)
    >>> print(sorted(str(f) for f in lsf(dest2)))
    ['testdir/dest2/f1', 'testdir/dest2/f2']
 
-   >>> dest3 = Path(testdir, 'dest3')
+   >>> dest3 = to_path(testdir, 'dest3')
    >>> mkdir(dest3)
    >>> cp([f1, f2], dest3)
    >>> print(sorted(str(f) for f in lsf(dest3)))
@@ -123,7 +123,7 @@ The dest must be a string.
 
 .. code-block:: python
 
-   >>> from shlib import cartesian_product, mkdir, Path, ls, lsd, lsf, mv, rm
+   >>> from shlib import cartesian_product, mkdir, ls, lsd, lsf, mv, rm, to_path
    >>> testdir = 'testdir'
    >>> rm(testdir)
    >>> mkdir(testdir)
@@ -134,7 +134,7 @@ The dest must be a string.
    >>> print(sorted(str(e) for e in ls(testdir)))
    ['testdir/d1', 'testdir/d2', 'testdir/f1', 'testdir/f2']
 
-   >>> dest = Path(testdir, 'dest')
+   >>> dest = to_path(testdir, 'dest')
    >>> mkdir(dest)
    >>> mv(files, dest)                  # move a list of files
    >>> print(sorted(str(f) for f in lsf(dest)))
@@ -267,19 +267,19 @@ Examples::
 Paths
 -----
 
-Path
-~~~~
+to_path
+~~~~~~~
 
 Create a path from a collection of path segments::
 
-   Path(seg, ...)
+   p = to_path(seg, ...)
 
-The segments are combined to form a path. The Path class is actually taken from 
-the pathlib package.
+The segments are combined to form a path. Expands a leading ~. Returns a pathlib 
+path.
 
 .. code-block:: python
 
-   >>> path = Path('A', 'b', '3')
+   >>> path = to_path('A', 'b', '3')
    >>> str(path)
    'A/b/3'
 
@@ -291,9 +291,9 @@ Create a list of paths by combining from path segments in all combinations::
 
    cartesian_product(seg, ...)
 
-Like with Path(), the components are combined to form a path, but in this case 
-each component may be a list. The results is the various components are combined 
-in a Cartesian product to form a list. For example:
+Like with to_path(), the components are combined to form a path, but in this 
+case each component may be a list. The results is the various components are 
+combined in a Cartesian product to form a list. For example:
 
 .. code-block:: python
 

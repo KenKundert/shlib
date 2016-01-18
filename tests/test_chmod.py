@@ -1,10 +1,10 @@
-from shlib import Path, chmod, mkdir, rm, touch
+from shlib import to_path, chmod, mkdir, rm, touch
 import pytest
 
 def test_chmod_downturn():
     """change mode of a single file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
 
     # run test
@@ -23,7 +23,7 @@ def test_chmod_downturn():
 def test_chmod_endorse():
     """change mode of a single directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
 
     # run test
@@ -49,11 +49,11 @@ def test_chmod_ground():
     for i in range(8):
         chmod(i, f1)
         # 0o100000 represents a regular file
-        assert Path(f1).stat().st_mode == 0o100000 + i
+        assert to_path(f1).stat().st_mode == 0o100000 + i
         chmod(8*i, f1)
-        assert Path(f1).stat().st_mode == 0o100000 + 8*i
+        assert to_path(f1).stat().st_mode == 0o100000 + 8*i
         chmod(8*8*i, f1)
-        assert Path(f1).stat().st_mode == 0o100000 + 8*8*i
+        assert to_path(f1).stat().st_mode == 0o100000 + 8*8*i
 
     # cleanup
     rm(f1)
@@ -68,11 +68,11 @@ def test_chmod_cymbal():
     for i in range(8):
         chmod(i, d1)
         # 0o040000 represents a directory
-        assert Path(d1).stat().st_mode == 0o040000 + i
+        assert to_path(d1).stat().st_mode == 0o040000 + i
         chmod(8*i, d1)
-        assert Path(d1).stat().st_mode == 0o040000 + 8*i
+        assert to_path(d1).stat().st_mode == 0o040000 + 8*i
         chmod(8*8*i, d1)
-        assert Path(d1).stat().st_mode == 0o040000 + 8*8*i
+        assert to_path(d1).stat().st_mode == 0o040000 + 8*8*i
 
     # cleanup
     rm(d1)
@@ -80,8 +80,8 @@ def test_chmod_cymbal():
 def test_chmod_gathering():
     """change mode of a multiple files"""
     # setup
-    f1 = Path('f1')
-    f2 = Path('f2')
+    f1 = to_path('f1')
+    f2 = to_path('f2')
     touch(f1, f2)
 
     # run test
@@ -103,8 +103,8 @@ def test_chmod_gathering():
 def test_chmod_quisling():
     """change mode of a multiple directories"""
     # setup
-    d1 = Path('d1')
-    d2 = Path('d2')
+    d1 = to_path('d1')
+    d2 = to_path('d2')
     mkdir(d1, d2)
 
     # run test

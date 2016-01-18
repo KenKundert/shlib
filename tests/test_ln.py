@@ -1,12 +1,12 @@
-from shlib import Path, ln, mkdir, rm, touch
+from shlib import to_path, ln, mkdir, rm, touch
 import pytest
 
 def test_ln_downturn():
     """link an existing file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
 
     # run test
     ln(f1, f2)
@@ -23,8 +23,8 @@ def test_ln_downturn():
 def test_ln_endorse():
     """link a nonexistent file"""
     # setup
-    f1 = Path('f1')
-    f2 = Path('f2')
+    f1 = to_path('f1')
+    f2 = to_path('f2')
 
     # run test
     ln(f1, f2)
@@ -38,9 +38,9 @@ def test_ln_endorse():
 def test_ln_ground():
     """link to a pre-existing name"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
-    f2 = Path('f2')
+    f2 = to_path('f2')
     touch(f2)
 
     # run test
@@ -53,9 +53,9 @@ def test_ln_ground():
 def test_ln_cymbal():
     """link an existing directory"""
     # setup
-    d1 = Path('d1')
+    d1 = to_path('d1')
     mkdir(d1)
-    d2 = Path('d2')
+    d2 = to_path('d2')
 
     # run test
     ln(d1, d2)

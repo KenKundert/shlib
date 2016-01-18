@@ -1,4 +1,4 @@
-from shlib import Path, cartesian_product
+from shlib import to_path, cartesian_product
 import pytest
 
 def test_cartesian_product_downturn():
@@ -25,7 +25,7 @@ def test_cartesian_product_negative():
     """cartesian product of paths"""
     # run test
     paths = cartesian_product(
-        [Path('A'), Path('B'), Path('C')],
+        [to_path('A'), to_path('B'), to_path('C')],
         ['a', 'b', 'c'],
         'f'
     )

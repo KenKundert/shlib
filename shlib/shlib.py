@@ -49,8 +49,8 @@ def is_collection(obj):
     return is_iterable(obj) and not is_str(obj)
 
 # to_path {{{2
-def to_path(arg):
-    return Path(arg).expanduser()
+def to_path(*args):
+    return Path(*args).expanduser()
 
 # to_paths {{{2
 def to_paths(args):

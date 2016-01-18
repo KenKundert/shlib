@@ -1,10 +1,10 @@
-from shlib import Path, touch, rm
+from shlib import to_path, touch, rm
 import pytest
 
 def test_touch_downturn():
     """touch an existing file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
     touch(f1)
 
     # run test
@@ -19,7 +19,7 @@ def test_touch_downturn():
 def test_touch_endorse():
     """touch a new file"""
     # setup
-    f1 = Path('f1')
+    f1 = to_path('f1')
 
     # run test
     touch(f1)
@@ -33,8 +33,8 @@ def test_touch_endorse():
 def test_touch_ground():
     """touch multiple files"""
     # setup
-    f1 = Path('f1')
-    f2 = Path('f2')
+    f1 = to_path('f1')
+    f2 = to_path('f2')
 
     # run test
     touch(f1, f2)
@@ -49,8 +49,8 @@ def test_touch_ground():
 def test_touch_cymbal():
     """touch multiple files"""
     # setup
-    f1 = Path('f1')
-    f2 = Path('f2')
+    f1 = to_path('f1')
+    f2 = to_path('f2')
 
     # run test
     touch([f1, f2])

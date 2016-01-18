@@ -1,4 +1,4 @@
-from shlib import Path, brace_expand
+from shlib import brace_expand
 import pytest
 
 def test_brace_expand_downturn():
