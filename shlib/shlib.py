@@ -467,7 +467,7 @@ class Cmd(object):
                 raise OSError(None, self.stderr.strip())
             else:
                 raise OSError(
-                    None, "unexpected exit status (%d)." % self.status
+                    None, "unexpected exit status (%d)" % self.status
                 )
         return self.status
 
@@ -534,7 +534,7 @@ def run(cmd, stdin=None, accept=0, shell=False):
         process.stdin.close()
     status = process.wait()
     if _Accept(accept).unacceptable(status):
-        raise OSError(None, "unexpected exit status (%d)." % status)
+        raise OSError(None, "unexpected exit status (%d)" % status)
     return status
 
 # sh {{{2
