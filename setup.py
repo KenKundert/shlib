@@ -15,11 +15,11 @@ setup(
     author_email='shlib@nurdletech.com',
     packages=['shlib'],
     url='http://nurdletech.com/linux-utilities/shlib',
-    download_url='https://github.com/kenkundert/shlib/tarball/master')
+    download_url='https://github.com/kenkundert/shlib/tarball/master',
     license='GPLv3+',
     zip_safe=True,
     install_requires=[
-        'braceexpand',
+        'braceexpand',  # this is optional
     ],
     keywords=[
         'shlib',
