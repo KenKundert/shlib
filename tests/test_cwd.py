@@ -9,9 +9,10 @@ def test_cwd_downturn():
 
     # run test
     bef = cwd()
-    cd(d1)
-    aft = cwd()
-    delta = aft.relative_to(bef)
+    with cd(d1):
+        aft = cwd()
+        delta = aft.relative_to(bef)
+        assert str(delta) == 'd1'
 
-    # check
-    assert str(delta) == 'd1'
+    # cleanup
+    rm(d1)

@@ -64,11 +64,9 @@ def to_paths(args):
  
 # to_str {{{2
 def to_str(path):
-    # following is preferred because an error will eventually result if 
-    # something other than a path or a string is passed to this function, 
-    # unfortunately it will not work until python 3.4.5
-    #return getattr(path, 'path', path)
-    return str(path)
+    # first convert to path to assure ~ expansion is done, then convert back to 
+    # string.
+    return str(to_path(path))
 
 # os_error {{{2
 def os_error(errno, filename=None):
@@ -172,9 +170,17 @@ def mkdir(*paths):
                 raise
 
 # cd {{{2
-def cd(path):
-    """Set current working directory to the given path"""
-    os.chdir(to_str(path))
+class cd:
+    def __init__(self, path):
+        self.starting_dir = cwd()
+        os.chdir(to_str(path))
+
+    # support __enter__ and __exit__ so cd can be called in a with statement.
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        os.chdir(to_str(self.starting_dir))
 
 # cwd {{{2
 def cwd():
@@ -199,7 +205,7 @@ def ls(*paths, select='*', reject='\0', only=None, hidden=None):
     If path is a directory, the items in the directory are returned.
 
     Args:
-        paths: the paths to list
+        paths: the paths to list ('.' if no paths given).
         select: a returned path will match this glob string, use ** to enable 
             recursion
         reject: a returned path will not match this glob string
@@ -213,8 +219,18 @@ def ls(*paths, select='*', reject='\0', only=None, hidden=None):
 
     >>> from shlib import *
 
-    >>> sorted(ls('*.py'))
-    ['clones.py', 'scripts.py', 'setup.py', 'test.clones.py', 'test.doctests.py']
+    >>> mkdir('d1', 'd2')
+    >>> touch('d1/f1', 'd1/f2', 'd2/f1', 'd2/f2')
+
+    >>> files = ls('d1')
+    >>> set(str(f) for f in files) == set('d1/f1 d1/f2'.split())
+    True
+
+    >>> files = ls('d1', 'd2', select='*2')
+    >>> set(str(f) for f in files) == set('d1/f2 d2/f2'.split())
+    True
+
+    >>> rm('d1', 'd2')
 
     """
     def acceptable(path):
@@ -228,6 +244,8 @@ def ls(*paths, select='*', reject='\0', only=None, hidden=None):
             return False
         return True
 
+    if not paths:
+        paths = ['.']
     retain_hidden = select.startswith('.') if hidden is None else hidden
     paths = paths if paths else ['.']
     for path in to_paths(paths):
@@ -247,8 +265,22 @@ def lsd(*args, **kwargs):
 
     Same as ls with only='dir'.
 
-    >>> sorted(lsd('.hg*'))
-    ['.hg']
+    >>> dirs = lsd(select='sh*')
+    >>> set(str(d) for d in dirs) == set('shlib'.split())
+    True
+
+    >>> mkdir('d1', 'd2')
+    >>> touch('d1/f1', 'd1/f2', 'd2/f1', 'd2/f2')
+
+    >>> dirs = lsd(select='d*')
+    >>> set(str(d) for d in dirs) == set('d1 d2'.split())
+    True
+
+    >>> dirs = ls(select='*2')
+    >>> set(str(d) for d in dirs) == set('d2'.split())
+    True
+
+    >>> rm('d1', 'd2')
 
     """
     kwargs['only'] = 'dir'
@@ -262,8 +294,18 @@ def lsf(*args, **kwargs):
 
     Same as ls with only='file'.
 
-    >>> sorted(lsf('.hg*'))
-    ['.hgignore']
+    >>> mkdir('d1', 'd2')
+    >>> touch('d1/f1', 'd1/f2', 'd2/f1', 'd2/f2')
+
+    >>> files = lsf('d1')
+    >>> set(str(f) for f in files) == set('d1/f1 d1/f2'.split())
+    True
+
+    >>> files = lsf('d1', 'd2', select='f2')
+    >>> set(str(f) for f in files) == set('d1/f2 d2/f2'.split())
+    True
+
+    >>> rm('d1', 'd2')
 
     """
     kwargs['only'] = 'file'
@@ -303,6 +345,32 @@ def is_executable(path):
 
     """
     return os.access(to_str(path), os.X_OK)
+
+# is_file {{{2
+def is_file(path):
+    """
+    Tests whether path exists and is a directory.
+
+    >>> is_file('/usr/bin/python')
+    True
+    >>> is_file('/usr/bin')
+    False
+
+    """
+    return to_path(path).is_file()
+
+# is_dir {{{2
+def is_dir(path):
+    """
+    Tests whether path exists and is a directory.
+
+    >>> is_dir('/usr/bin/python')
+    False
+    >>> is_dir('/usr/bin')
+    True
+
+    """
+    return to_path(path).is_dir()
 
 # Path list functions (walk, cartesian_product, brace_expand, etc.) {{{1
 # cartesian_product()  {{{2

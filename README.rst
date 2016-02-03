@@ -23,9 +23,9 @@ that combines the commonly used utilities for interacting with the filesystem
 that follows the conventions used by the corresponding shell commands.  
 
 It consists of replacements for some very common Unix utilities that interact 
-with the filesystem, such as cp, mv, rm, ln, and mkdir. These tend to be less 
-fussy than their command line counter parts. For example, rm deletes both files 
-and directories without distinction and will not complain if the file or 
+with the filesystem, such as cp, mv, rm, ln, mkdir, and cd. These tend to be 
+less fussy than their command line counter parts. For example, rm deletes both 
+files and directories without distinction and will not complain if the file or 
 directory does not exist. Similarly mkdir will create any child directories 
 needed and will not complain if the directory already exists.
 
@@ -70,7 +70,7 @@ Example:
 
 .. code-block:: python
 
-   >>> from shlib import cartesian_product, cp, ls, lsd, lsf, mkdir, rm, to_path, touch
+   >>> from shlib import *
    >>> testdir = 'testdir'
    >>> rm(testdir)
    >>> mkdir(testdir)
@@ -123,7 +123,7 @@ The dest must be a string.
 
 .. code-block:: python
 
-   >>> from shlib import cartesian_product, mkdir, ls, lsd, lsf, mv, rm, to_path
+   >>> from shlib import *
    >>> testdir = 'testdir'
    >>> rm(testdir)
    >>> mkdir(testdir)
@@ -207,6 +207,23 @@ Returns without complaint if the directory already exists. Each argument must be
 either a string or a list of strings.
 
 
+Change Directory (cd)
+~~~~~~~~~~~~~~~~~~~~~
+
+Change to an existing directory::
+
+   cd(path)
+
+Makes path the current working directory.
+
+May also be used in a with block::
+
+   with cd(path):
+       cwd()
+
+The working directory returns to its original value upon leaving the with block.
+
+
 List Directory (ls, lsd, lsf)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -275,13 +292,84 @@ Create a path from a collection of path segments::
    p = to_path(seg, ...)
 
 The segments are combined to form a path. Expands a leading ~. Returns a pathlib 
-path.
+path. It is generally not necessary to apply to_path() to paths being given to 
+the shlib functions, but using it gives you access to all of the various pathlib 
+methods for the path.
 
 .. code-block:: python
 
    >>> path = to_path('A', 'b', '3')
    >>> str(path)
    'A/b/3'
+
+
+is_readable
+~~~~~~~~~~~
+
+Determine whether given path exists and is readable.
+
+   b = is_readable(p)
+
+.. code-block:: python
+
+   >>> is_readable('/usr/bin/python')
+   True
+
+
+is_writable
+~~~~~~~~~~~
+
+Determine whether given path exists and is writable.
+
+   b = is_writable(p)
+
+.. code-block:: python
+
+   >>> is_writable('/usr/bin/python')
+   False
+
+
+is_executable
+~~~~~~~~~~~~~
+
+Determine whether given path exists and is executable.
+
+   b = is_executable(p)
+
+.. code-block:: python
+
+   >>> is_executable('/usr/bin/python')
+   True
+
+
+is_file
+~~~~~~~
+
+Determine whether given path exists and is a file.
+
+   b = is_file(p)
+
+.. code-block:: python
+
+   >>> is_file('/usr/bin/python')
+   True
+   >>> is_file('/usr/bin')
+   False
+
+
+is_dir
+~~~~~~
+
+Determine whether given path exists and is a directory.
+
+   b = is_dir(p)
+
+.. code-block:: python
+
+   >>> is_dir('/usr/bin/python')
+   False
+   >>> is_dir('/usr/bin')
+   True
 
 
 Cartesian Product
@@ -319,7 +407,6 @@ Create a list of paths using Bash-like brace expansion::
 
 .. code-block:: python
 
-   >>> from shlib import brace_expand
    >>> paths = brace_expand('python{2.{5..7},3.{2..5}}')
 
    >>> for p in sorted(str(p) for p in paths):

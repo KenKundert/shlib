@@ -1,4 +1,4 @@
-from shlib import to_path, ls, mkdir, rm, touch
+from shlib import to_path, ls, mkdir, cd, rm, touch
 import pytest
 
 def test_ls_downturn():
@@ -245,24 +245,26 @@ def test_ls_contrast():
 def test_ls_abominate():
     """recursive list of directory"""
     # setup
-    d1 = to_path('d1')
-    mkdir(d1)
-    d1d1 = to_path('d1/d1')
-    mkdir(d1d1)
-    d1d2 = to_path('d1/d2')
-    mkdir(d1d2)
-    d1d1f1 = to_path('d1/d1/f1')
-    touch(d1d1f1)
-    d1d2f2 = to_path('d1/d2/f2')
-    touch(d1d2f2)
+    mkdir('work')
+    with cd('work'):
+        d1 = to_path('d1')
+        mkdir(d1)
+        d1d1 = to_path('d1/d1')
+        mkdir(d1d1)
+        d1d2 = to_path('d1/d2')
+        mkdir(d1d2)
+        d1d1f1 = to_path('d1/d1/f1')
+        touch(d1d1f1)
+        d1d2f2 = to_path('d1/d2/f2')
+        touch(d1d2f2)
 
-    # run test
-    paths = ls('.', select='**/*')
+        # run test
+        paths = ls('.', select='**/*')
 
-    # check
-    assert set(str(f) for f in paths) == set(
-       ['d1', 'd1/d1', 'd1/d2', 'd1/d1/f1', 'd1/d2/f2']
-    )
+        # check
+        assert set(str(f) for f in paths) == set(
+           ['d1', 'd1/d1', 'd1/d2', 'd1/d1/f1', 'd1/d2/f2']
+        )
 
     # cleanup
-    rm(d1)
+    rm('work')
