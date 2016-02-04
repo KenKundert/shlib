@@ -11,7 +11,9 @@ shell-script like things relatively easily in Python. Is a natural complement to
 the pathlib library. Pathlib does pretty much what you would like to do with 
 a single path; shlib does similar things with many paths at once. For example, 
 with pathlib you can remove (unlink) a single file, but with shlib you can 
-remove many files at once.
+remove many files at once. Furthermore, most of the features of pathlib are 
+implemented as pathlib methods, so you must convert your strings to paths before 
+you can use them. ShLib is equally comfortable with strings as with paths.
 
 Writing programs that substantially interact with the file system can be 
 surprisingly painful in Python because the code that is used to do so is spread 
