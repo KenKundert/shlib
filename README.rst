@@ -3,7 +3,7 @@
    ###Page### of ###Total###
 
 
-SHLib - Shell Library
+ShLib - Shell Library
 =====================
 
 A light-weight package with few dependencies that allows users to do 
