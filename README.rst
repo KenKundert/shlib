@@ -3,8 +3,8 @@
    ###Page### of ###Total###
 
 
-Shell Library
-=============
+SHLib - Shell Library
+=====================
 
 A light-weight package with few dependencies that allows users to do 
 shell-script like things relatively easily in Python. Is a natural complement to 
@@ -46,6 +46,8 @@ Installation
 
 Use 'pip3 install shlib' to install. Requires Python3.5 or better.
 
+.. image:: https://travis-ci.org/KenKundert/shlib.svg?branch=master
+    :target: https://travis-ci.org/KenKundert/shlib
 
 System Utility Functions
 ------------------------
