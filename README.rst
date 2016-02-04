@@ -458,9 +458,30 @@ termination, all other codes will be treated as errors.
 
 For example, to run diff you might use::
 
-   diff = Cmd('diff test ref', 'sOEW1')
-   diff.run()
-   differences = diff.stdout
+   >>> to_path('./ref').write_text('''\
+   ...     line1
+   ...     line2
+   ...     line3\
+   ... ''')
+   29
+   >>> to_path('./test').write_text('''\
+   ...     line1
+   ...     line2\
+   ... ''')
+   19
+
+   >>> cat = Cmd(['cat', 'test'], 'sOeW')
+   >>> cat.run()
+   0
+
+   >>> print(cat.stdout)
+       line1
+       line2
+
+   >>> diff = Cmd('diff test ref', 'sOEW1')
+   >>> status = diff.run()
+   >>> status
+   1
 
 Use of O in the modes allows access to stdout, which is needed to access the 
 differences. Specifying E also allows access to stderr, which in this case is 
@@ -493,6 +514,18 @@ Run and Sh
 Run and Sh are subclasses of Cmd. They are the same except that they both run 
 the program right away (you would not explicitly run the program with the 
 run()).  Run does not use a shell by default where as Sh does.
+
+   >>> echo = Run('echo hello world > helloworld', 'SoeW')
+   >>> echo.status
+   0
+
+   >>> cat = Run(['cat', 'helloworld'], 'sOeW')
+   >>> cat.status
+   0
+
+   >>> print(cat.stdout)
+   hello world
+   <BLANKLINE>
 
 run, sh, bg, shbg
 ~~~~~~~~~~~~~~~~~
