@@ -532,7 +532,7 @@ run()).  Run does not use a shell by default where as Sh does.
 run, sh, bg, shbg
 ~~~~~~~~~~~~~~~~~
 
-These are functions that run a program without capturing their output::
+These are functions that run a program without capturing its output::
 
    run(cmd, stdin=None, accept=0, shell=False)
    sh(cmd, stdin=None, accept=0, shell=True)
