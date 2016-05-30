@@ -170,7 +170,7 @@ strings.
    >>> rm(dest)
    >>> print(sorted(str(e) for e in ls(testdir)))
    []
-   
+
    >>> rm(testdir)
 
 Link (ln)
@@ -246,9 +246,9 @@ The remaining arguments must be specified as keyword arguments.
    select=<glob-str>
 
 If *select* is specified, an item is returned only if it matches the given 
-pattern.  Using '**' in *select* enables a recursive walk through a directory 
-and all its subdirectories.  Using '**' alone returns only directories whereas 
-'**/*' returns files and directories.
+pattern.  Using '\*\*' in *select* enables a recursive walk through a directory 
+and all its subdirectories.  Using '\*\*' alone returns only directories whereas 
+'\*\*/\*' returns files and directories.
 
 ::
 
@@ -268,7 +268,7 @@ items of the corresponding type are returned.
 ::
 
     hidden=<bool>
-    
+
 The value of hidden is a boolean that indicates whether items that begin with 
 '.' are included in the output. If hidden is not specified, hidden items are not 
 included unless *select* begins with '.'.
@@ -498,7 +498,7 @@ program to exit, then you can use the wait() and kill() methods to manage the
 execution. For example::
 
    diff = Cmd(['gvim', '-d', lfile, rfile], 'w')
-   diff.run()                                                                    
+   diff.run()
    try:
        diff.wait()
    except KeyboardInterrupt:
@@ -549,6 +549,6 @@ function returns the locations along the path where a file or directory can be
 found with matching flags::
 
    which(name, path=None, flags=os.X_OK)
-    
+
 By default the path is specified by the PATH environment variable and the flags 
 check whether you have execute permission.
