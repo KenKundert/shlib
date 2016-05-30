@@ -1,8 +1,3 @@
-.. footer::
-
-   ###Page### of ###Total###
-
-
 ShLib - Shell Library
 =====================
 

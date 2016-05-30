@@ -244,8 +244,7 @@ def ls(*paths, select='*', reject='\0', only=None, hidden=None):
             return False
         return True
 
-    if not paths:
-        paths = ['.']
+    select = to_str(select)
     retain_hidden = select.startswith('.') if hidden is None else hidden
     paths = paths if paths else ['.']
     for path in to_paths(paths):
@@ -462,17 +461,12 @@ class Cmd(object):
 
         Returns exit status if wait_for_termination is True.
         """
-        import subprocess
+        import shlex, subprocess
 
-        # Popen seems to want cmd to be a string is the shell is being use, or 
-        # a list otherwise
         if is_str(self.cmd):
-            cmd = self.cmd if self.use_shell else self.cmd.split()
+            cmd = self.cmd if self.use_shell else shlex.split(self.cmd)
         else:
-            if self.use_shell:
-                cmd = ' '.join(to_str(c) for c in self.cmd)
-            else:
-                cmd = [to_str(c) for c in self.cmd]
+            cmd = [to_str(c) for c in self.cmd]
 
         # indicate streams to intercept
         streams = {}
