@@ -1,4 +1,4 @@
-from shlib import to_path, cd, mkdir, rm, touch, cwd, is_file
+from shlib import to_path, cd, mkdir, rm, touch, cwd
 import pytest
 
 def test_cd_downturn():
@@ -15,7 +15,7 @@ def test_cd_downturn():
 
     # run test
     cd(d1)
-    assert is_file(f1)
+    assert to_path(f1).is_file()
     assert str(d1p) == str(cwd())
     cd('..')
     assert str(dot) == str(cwd())
@@ -37,7 +37,7 @@ def test_cd_endorse():
 
     # run test
     cd(d1)
-    assert is_file(f1)
+    assert to_path(f1).is_file()
     assert str(d1p) == str(cwd())
     cd('..')
     assert str(dot) == str(cwd())
@@ -59,7 +59,7 @@ def test_cd_thinner():
 
     # run test
     with cd(d1):
-        assert is_file(f1)
+        assert to_path(f1).is_file()
         assert str(d1p) == str(cwd())
     assert str(dot) == str(cwd())
 
@@ -80,7 +80,7 @@ def test_cd_quoit():
 
     # run test
     with cd(d1):
-        assert is_file(f1)
+        assert to_path(f1).is_file()
         assert str(d1p) == str(cwd())
     assert str(dot) == str(cwd())
 

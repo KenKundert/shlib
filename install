@@ -8,13 +8,13 @@
 # Requires Python 3.4 or better.
 
 cmd=shlib
-pythons=(python3)
+pythons=(python3.5 python3.4)
     # Add the versions of python you would like to install to above
 
 for python in ${pythons[*]}; do
     # Determine the version of python we are using
     vers=$($python -c 'import sys; print("%s.%s" % (sys.version_info[0], sys.version_info[1]))')
-    echo "Installing $cmd to ~/.home/bin (Python$vers)."
+    echo "Installing $cmd to ~/.local (Python$vers)."
 
     # remove build directories from a previous install to assure a clean install
     rm -rf build dist $cmd.egg-info install.out

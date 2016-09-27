@@ -19,8 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 
+__version__ = '0.1.2'
+
 # Imports {{{1
-from pathlib import Path
+from extended_pathlib import Path
 import itertools
 import shutil
 import errno
@@ -50,7 +52,10 @@ def is_collection(obj):
 
 # to_path {{{2
 def to_path(*args):
-    return Path(*args).expanduser()
+    try:
+        return Path(*args).expanduser()
+    except AttributeError:
+        return Path(*args)
 
 # to_paths {{{2
 def to_paths(args):
@@ -264,8 +269,8 @@ def lsd(*args, **kwargs):
 
     Same as ls with only='dir'.
 
-    >>> dirs = lsd(select='sh*')
-    >>> set(str(d) for d in dirs) == set('shlib'.split())
+    >>> dirs = lsd(select='xyz*')
+    >>> set(str(d) for d in dirs) == set(''.split())
     True
 
     >>> mkdir('d1', 'd2')
@@ -311,67 +316,21 @@ def lsf(*args, **kwargs):
     for f in ls(*args, **kwargs):
         yield f
 
-# Path functions (is_readable, etc.) {{{1
-# is_readable {{{2
-def is_readable(path):
+# Path list functions (leaves, cartesian_product, brace_expand, etc.) {{{1
+def leaves(path, hidden=False):
+    """Leaves
+
+    Walk a file hierarchy and return all files.
     """
-    Tests whether path exists and is readable.
+    for each in scandir(path):
+        if each.is_dir(follow_symlinks=False):
+            for e in leaves(each.path):
+                if hidden or not e.path.startswith('.'):
+                    yield e
+        else:
+            if hidden or not each.name.startswith('.'):
+                yield each
 
-    >>> is_readable('/usr/bin/python')
-    True
-
-    """
-    return os.access(to_str(path), os.R_OK)
-
-# is_writable {{{2
-def is_writable(path):
-    """
-    Tests whether path exists and is writable.
-
-    >>> is_writable('/usr/bin/python')
-    False
-
-    """
-    return os.access(to_str(path), os.W_OK)
-
-# is_executable {{{2
-def is_executable(path):
-    """
-    Tests whether path exists and is executable.
-
-    >>> is_executable('/usr/bin/python')
-    True
-
-    """
-    return os.access(to_str(path), os.X_OK)
-
-# is_file {{{2
-def is_file(path):
-    """
-    Tests whether path exists and is a directory.
-
-    >>> is_file('/usr/bin/python')
-    True
-    >>> is_file('/usr/bin')
-    False
-
-    """
-    return to_path(path).is_file()
-
-# is_dir {{{2
-def is_dir(path):
-    """
-    Tests whether path exists and is a directory.
-
-    >>> is_dir('/usr/bin/python')
-    False
-    >>> is_dir('/usr/bin')
-    True
-
-    """
-    return to_path(path).is_dir()
-
-# Path list functions (walk, cartesian_product, brace_expand, etc.) {{{1
 # cartesian_product()  {{{2
 def cartesian_product(*fragments):
     """
