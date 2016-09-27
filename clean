@@ -5,6 +5,7 @@ set nonomatch
 # the rest is common to all python directories
 rm -f *.pyc *.pyo .test*.sum expected result install.out
 rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html 
+rm {.,tests}/{helloworld,test,ref}
 foreach i (*/clean)
     if ($i == "*/clean") break
     #echo $i
