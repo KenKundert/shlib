@@ -317,19 +317,19 @@ def lsf(*args, **kwargs):
         yield f
 
 # Path list functions (leaves, cartesian_product, brace_expand, etc.) {{{1
-def leaves(path, hidden=False):
-    """Leaves
-
-    Walk a file hierarchy and return all files.
-    """
-    for each in scandir(path):
+def _leaves(path, hidden=False):
+    for each in os.scandir(path):
         if each.is_dir(follow_symlinks=False):
-            for e in leaves(each.path):
-                if hidden or not e.path.startswith('.'):
-                    yield e
+            for e in _leaves(each):
+                if hidden or not e.name.startswith('.'):
+                    yield e.path
         else:
             if hidden or not each.name.startswith('.'):
-                yield each
+                yield each.path
+
+def leaves(path, hidden=False):
+    for each in _leaves(str(path)):
+        yield Path(each)
 
 # cartesian_product()  {{{2
 def cartesian_product(*fragments):
