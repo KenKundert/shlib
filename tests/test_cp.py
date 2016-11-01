@@ -41,7 +41,7 @@ def test_cp_ground():
     f2 = to_path('f2')
 
     # run test
-    with pytest.raises(OSError):
+    with pytest.raises(IOError):
         cp(f1, f2)
 
 def test_cp_cymbal():
@@ -231,7 +231,7 @@ def test_cp_animator():
     f2 = 'f2'
 
     # run test
-    with pytest.raises(OSError):
+    with pytest.raises(IOError):
         cp(f1, f2)
 
 def test_cp_adieu():

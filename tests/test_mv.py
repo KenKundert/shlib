@@ -43,7 +43,7 @@ def test_mv_ground():
     f2 = to_path('f2')
 
     # run test
-    with pytest.raises(OSError):
+    with pytest.raises(IOError):
         mv(f1, f2)
 
 def test_mv_cymbal():

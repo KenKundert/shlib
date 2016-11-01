@@ -143,8 +143,13 @@ def rm(*paths):
                 shutil.rmtree(to_str(path))
             else:
                 path.unlink()
-        except FileNotFoundError:
-            pass
+        # suitable for python3 only
+        # except FileNotFoundError:
+        #     pass
+        except (IOError, OSError) as err:
+            # don't complain if the file never existed
+            if err.errno != errno.ENOENT:
+                raise
 
 # ln {{{2
 def ln(src, dest):
@@ -169,9 +174,14 @@ def mkdir(*paths):
     for path in to_paths(paths):
         try:
             path.mkdir(parents=True)
-            #KSK: in py3.5 and beyond use: path.mkdir(parents=True, exist_ok=True)
-        except FileExistsError:
-            if path.is_file():
+                # older versions of pathlib ignore exist_ok
+                # in Python3.5, just add exist_ok=True to arg list
+        # commented out version is suitable for Python3 only
+        # except FileExistsError:
+        #     if path.is_file():
+        #         raise
+        except (IOError, OSError) as err:
+            if err.errno != errno.EEXIST or path.is_file():
                 raise
 
 # cd {{{2
@@ -199,10 +209,7 @@ def chmod(mode, *paths):
         path.chmod(mode)
 
 # ls {{{2
-def ls(*paths, select='*', reject='\0', only=None, hidden=None):
-    # KSK: I have used '\0' as the default reject pattern because using '' 
-    # generates an exception. I put in an enhancement request to the pathlib 
-    # team to fix this, but it was rejected.
+def ls(*paths, **kwargs):
     """
     List paths
 
@@ -218,6 +225,9 @@ def ls(*paths, select='*', reject='\0', only=None, hidden=None):
         hidden (bool): specifies whether hidden files should be returned, if 
             not given hidden files are returned if select string starts with 
             '.'
+
+    KSK: it is a bit weird that I allow paths to be a list, but not select or
+    reject. It would be nice to pass lists to both of those.
 
     Returns:
         path generator: iterates through filtered paths
@@ -238,6 +248,14 @@ def ls(*paths, select='*', reject='\0', only=None, hidden=None):
     >>> rm('d1', 'd2')
 
     """
+    select = kwargs.get('select', '*')
+    reject = kwargs.get('reject', '\0')
+        # KSK: I have used '\0' as the default reject pattern because using ''
+        # generates an exception. I put in an enhancement request to the pathlib
+        # team to fix this, but it was rejected.
+    only = kwargs.get('only')
+    hidden = kwargs.get('hidden')
+
     def acceptable(path):
         if only == 'file' and not path.is_file():
             return False
@@ -463,24 +481,10 @@ class Cmd(object):
         """
         process = self.process
 
-        # Read the outputs
-        if self.save_stdout:
-            self.stdout = process.stdout.read().decode(self.encoding)
-        else:
-            self.stderr = None
-        if self.save_stderr:
-            self.stderr = process.stderr.read().decode(self.encoding)
-        else:
-            self.stderr = None
-
-        # wait for process to complete
-        self.status = process.wait()
-
-        # close output streams
-        if process.stdout:
-            process.stdout.close()
-        if process.stderr:
-            process.stderr.close()
+        stdout, stderr = process.communicate()
+        self.stdout = None if stdout is None else stdout.decode(self.encoding)
+        self.stderr = None if stderr is None else stderr.decode(self.encoding)
+        self.status = process.returncode
 
         # check return code
         if self.accept.unacceptable(self.status):
@@ -555,7 +559,7 @@ def run(cmd, stdin=None, accept=0, shell=False):
         process.stdin.close()
     status = process.wait()
     if _Accept(accept).unacceptable(status):
-        raise OSError(None, "unexpected exit status (%d)" % status)
+        raise OSError(None, "unexpected exit status (%d)." % status)
     return status
 
 # sh {{{2
