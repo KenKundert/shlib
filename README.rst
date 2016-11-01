@@ -398,25 +398,37 @@ termination, all other codes will be treated as errors.
 
 For example, to run diff you might use::
 
-   >>> to_path('./ref').write_text('''\
-   ...     line1
-   ...     line2
-   ...     line3\
-   ... ''')
-   29
-   >>> to_path('./test').write_text('''\
-   ...     line1
-   ...     line2\
-   ... ''')
-   19
+   >>> import sys, doctest, textwrap
+   >>> doctest.ELLIPSIS_MARKER = '-etc-'
+   >>> if sys.version_info.major >= 3: # doctest:+ELLIPSIS
+   ...     to_path('./ref').write_text(textwrap.dedent('''
+   ...         line1
+   ...         line2
+   ...         line3
+   ...     ''').strip())
+   ...     to_path('./test').write_text(textwrap.dedent('''
+   ...         line1
+   ...         line2
+   ...     ''').strip())
+   ... else:  # in python2 these need to be unicode
+   ...     to_path('./ref').write_text(textwrap.dedent(u'''
+   ...         line1
+   ...         line2
+   ...         line3
+   ...     ''').strip())
+   ...     to_path('./test').write_text(textwrap.dedent(u'''
+   ...         line1
+   ...         line2
+   ...     ''').strip())
+   -etc-
 
    >>> cat = Cmd(['cat', 'test'], 'sOeW')
    >>> cat.run()
    0
 
    >>> print(cat.stdout)
-       line1
-       line2
+   line1
+   line2
 
    >>> diff = Cmd('diff test ref', 'sOEW1')
    >>> status = diff.run()
