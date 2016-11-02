@@ -19,7 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 
-__version__ = '0.3.2'
+__version__ = '0.3.3'
 
 # Imports {{{1
 from extended_pathlib import Path
