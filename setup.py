@@ -20,7 +20,7 @@ setup(
     zip_safe=True,
     install_requires=[
         'braceexpand',  # this one is optional
-        'extended_pathlib>=0.2',
+        'extended_pathlib>=0.3',
     ],
     keywords=[
         'shlib',
