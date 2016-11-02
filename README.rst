@@ -399,29 +399,19 @@ termination, all other codes will be treated as errors.
 
 For example, to run diff you might use::
 
-   >>> import sys, doctest, textwrap
-   >>> doctest.ELLIPSIS_MARKER = '-etc-'
-   >>> if sys.version_info.major >= 3: # doctest:+ELLIPSIS
-   ...     to_path('./ref').write_text(textwrap.dedent('''
-   ...         line1
-   ...         line2
-   ...         line3
-   ...     ''').strip())
-   ...     to_path('./test').write_text(textwrap.dedent('''
-   ...         line1
-   ...         line2
-   ...     ''').strip())
-   ... else:  # in python2 these need to be unicode
-   ...     to_path('./ref').write_text(textwrap.dedent(u'''
-   ...         line1
-   ...         line2
-   ...         line3
-   ...     ''').strip())
-   ...     to_path('./test').write_text(textwrap.dedent(u'''
-   ...         line1
-   ...         line2
-   ...     ''').strip())
-   -etc-
+   >>> import sys, textwrap
+   >>> content1 = textwrap.dedent('''
+   ...     line1
+   ...     line2
+   ...     line3
+   ... ''').strip()
+   >>> content2 = textwrap.dedent('''
+   ...     line1
+   ...     line2
+   ... ''').strip()
+
+   >>> bytes_written1 = to_path('./ref').write_text(content1)
+   >>> bytes_written2 = to_path('./test').write_text(content2)
 
    >>> cat = Cmd(['cat', 'test'], 'sOeW')
    >>> cat.run()
