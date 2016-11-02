@@ -19,8 +19,8 @@ setup(
     license='GPLv3+',
     zip_safe=True,
     install_requires=[
-        'braceexpand',  # this is optional
-        'extended_pathlib>=0.1',
+        'braceexpand',  # this one is optional
+        'extended_pathlib>=0.2',
     ],
     keywords=[
         'shlib',

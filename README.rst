@@ -41,7 +41,7 @@ a collection of paths. These paths are returned as pathlib paths.
 Installation
 ------------
 
-Use 'pip3 install shlib' to install. Requires Python3.5 or better.
+Use 'pip3 install shlib' to install. Requires Python2.7 or Python3.3 or better.
 
 .. image:: https://img.shields.io/travis/KenKundert/shlib/master.svg
     :target: https://travis-ci.org/KenKundert/shlib
@@ -57,6 +57,7 @@ Use 'pip3 install shlib' to install. Requires Python3.5 or better.
 
 .. image:: https://img.shields.io/pypi/dd/shlib.svg
     :target: https://pypi.python.org/pypi/shlib/
+
 
 System Utility Functions
 ------------------------
