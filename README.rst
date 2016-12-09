@@ -400,18 +400,18 @@ termination, all other codes will be treated as errors.
 For example, to run diff you might use::
 
    >>> import sys, textwrap
-   >>> content1 = textwrap.dedent('''
+   >>> ref = textwrap.dedent('''
    ...     line1
    ...     line2
    ...     line3
    ... ''').strip()
-   >>> content2 = textwrap.dedent('''
+   >>> test = textwrap.dedent('''
    ...     line1
    ...     line2
    ... ''').strip()
 
-   >>> bytes_written1 = to_path('./ref').write_text(content1)
-   >>> bytes_written2 = to_path('./test').write_text(content2)
+   >>> ref_bytes_written = to_path('./ref').write_text(ref)
+   >>> test_bytes_written = to_path('./test').write_text(test)
 
    >>> cat = Cmd(['cat', 'test'], 'sOeW')
    >>> cat.run()
@@ -456,7 +456,7 @@ Run and Sh
 
 Run and Sh are subclasses of Cmd. They are the same except that they both run 
 the program right away (you would not explicitly run the program with the 
-run()).  Run does not use a shell by default where as Sh does.
+run()).  Run does not use a shell by default whereas Sh does.
 
    >>> echo = Run('echo hello world > helloworld', 'SoeW')
    >>> echo.status
