@@ -8,7 +8,7 @@
 # Requires Python 3.4 or better.
 
 cmd=shlib
-pythons=(python2.7 python3.5)
+pythons=(python2 python3)
     # Add the versions of python you would like to install to above
 
 for python in ${pythons[*]}; do

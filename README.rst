@@ -350,7 +350,7 @@ Create a list of paths using Bash-like brace expansion::
 
 .. code-block:: python
 
-   >>> paths = brace_expand('python{2.{5..7},3.{2..5}}')
+   >>> paths = brace_expand('python{2.{5..7},3.{2..6}}')
 
    >>> for p in sorted(str(p) for p in paths):
    ...     print(p)
@@ -361,6 +361,7 @@ Create a list of paths using Bash-like brace expansion::
    python3.3
    python3.4
    python3.5
+   python3.6
 
 
 Executing Programs
