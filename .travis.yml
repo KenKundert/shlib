@@ -14,5 +14,7 @@ deploy:
     user: shlib
     on:
         tags: true
+after_success:
+  - coveralls
 
 
