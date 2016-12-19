@@ -8,8 +8,8 @@ python:
 install:
   - pip install .
   - pip install coveralls
-script: 
-  - py.test tests
+script:
+  - coverage run --inclue shlib.py setup.py test
 deploy:
     provider: pypi
     user: shlib

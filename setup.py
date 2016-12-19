@@ -21,7 +21,9 @@ setup(
     install_requires=[
         'braceexpand',  # this one is optional
         'extended_pathlib>=0.3',
+        'pytest-runner',
     ],
+    tests_require=['pytest'],
     keywords=[
         'shlib',
         'shell',

@@ -2,6 +2,7 @@
 .*.swp
 test_key/random_seed
 install.out
+.eggs
 
 # Packages
 *.egg
@@ -29,6 +30,7 @@ pip-log.txt
 .tox
 .test*.sum
 generated_settings/**
+htmlcov
 
 #Translations
 *.mo
