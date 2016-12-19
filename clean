@@ -11,8 +11,3 @@ foreach i (*/clean)
     #echo $i
     (cd $i:h; ./clean)
 end
-foreach i (*/Makefile)
-    if ($i == "*/Makefile") break
-    #echo $i
-    (cd $i:h; make clean)
-end

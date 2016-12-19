@@ -2,3 +2,4 @@
 
 rm -rf __pycache__
 rm -rf f[0-9] d[0-9]
+fm -rf .coverage htmlcov
