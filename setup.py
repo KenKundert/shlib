@@ -20,7 +20,7 @@ setup(
     zip_safe=True,
     install_requires=[
         'braceexpand',  # this one is optional
-        'extended_pathlib>=0.3',
+        'extended_pathlib>=0.4',
     ],
     setup_requires=[
         'pytest-runner>=2.0',

@@ -439,6 +439,7 @@ class Cmd(object):
         Returns exit status if wait_for_termination is True.
         """
         import shlex, subprocess
+        self.stdin = stdin
 
         if is_str(self.cmd):
             cmd = self.cmd if self.use_shell else shlex.split(self.cmd)
@@ -459,11 +460,6 @@ class Cmd(object):
             cmd, shell=self.use_shell, **streams
         )
 
-        # write to stdin
-        if stdin is not None:
-            process.stdin.write(stdin.encode(self.encoding))
-            process.stdin.close()
-
         # store needed information and wait for termination if desired
         self.pid = process.pid
         self.process = process
@@ -475,13 +471,14 @@ class Cmd(object):
         """
         Wait for command to terminate.
 
-        This should only be used it wait-for-termination is False.
+        This should only be used if wait-for-termination is False.
 
         Returns exit status of the command.
         """
         process = self.process
 
-        stdout, stderr = process.communicate()
+        stdin = self.stdin if self.stdin else ''
+        stdout, stderr = process.communicate(stdin.encode(self.encoding))
         self.stdout = None if stdout is None else stdout.decode(self.encoding)
         self.stderr = None if stderr is None else stderr.decode(self.encoding)
         self.status = process.returncode
