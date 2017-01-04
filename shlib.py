@@ -438,10 +438,11 @@ class Cmd(object):
 
         Returns exit status if wait_for_termination is True.
         """
-        import shlex, subprocess
         self.stdin = stdin
+        import subprocess
 
         if is_str(self.cmd):
+            import shlex
             cmd = self.cmd if self.use_shell else shlex.split(self.cmd)
         else:
             cmd = [to_str(c) for c in self.cmd]
@@ -497,6 +498,12 @@ class Cmd(object):
     def kill(self):
         self.process.kill()
         self.process.wait()
+
+    # split {{{3
+    @staticmethod
+    def split(cmd):
+        import shlex
+        return shlex.split(cmd)
 
     # __str__ {{{3
     def __str__(self):
