@@ -467,6 +467,11 @@ class Cmd(object):
         if self.wait_for_termination:
             return self.wait()
 
+        # write to stdin
+        if stdin is not None:
+            process.stdin.write(stdin.encode(self.encoding))
+            process.stdin.close()
+
     # wait {{{3
     def wait(self):
         """
