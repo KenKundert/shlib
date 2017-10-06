@@ -431,12 +431,14 @@ class Cmd(object):
     # run {{{3
     def run(self, stdin=None):
         """
-        Run the command
+        Run the command, will wait for it to terminate.
 
         If stdin is given, it should be a string. Otherwise, no connection is
         made to stdin of the command.
 
         Returns exit status if wait_for_termination is True.
+        If wait_for_termination is False, you must call wait(), otherwise stdin
+        is not be applied.  If you don't want to wait, call start() instead.
         """
         self.stdin = stdin
         import subprocess
@@ -466,6 +468,46 @@ class Cmd(object):
         self.process = process
         if self.wait_for_termination:
             return self.wait()
+
+    # start {{{3
+    def start(self, stdin=None):
+        """
+        Start the command, will not wait for it to terminate.
+
+        If stdin is given, it should be a string. Otherwise, no connection is
+        made to stdin of the command.
+        """
+        self.stdin = None
+        import subprocess
+
+        if is_str(self.cmd):
+            import shlex
+            cmd = self.cmd if self.use_shell else shlex.split(self.cmd)
+        else:
+            cmd = self.cmd
+
+        if self.save_stdout or self.save_stderr:
+            try:
+                DEVNULL = subprocess.DEVNULL
+            except AttributeError:
+                DEVNULL = open(os.devnull, 'wb')
+
+        streams = {}
+        if stdin is not None:
+            streams['stdin'] = subprocess.PIPE
+        if self.save_stdout:
+            streams['stdout'] = DEVNULL
+        if self.save_stderr:
+            streams['stderr'] = DEVNULL
+
+        # run the command
+        process = subprocess.Popen(
+            cmd, shell=self.use_shell, **streams
+        )
+
+        # store needed information and wait for termination if desired
+        self.pid = process.pid
+        self.process = process
 
         # write to stdin
         if stdin is not None:
@@ -533,7 +575,7 @@ class Run(Cmd):
         self._sanity_check()
         self.run(stdin)
 
-# Sh class {{{2
+# Sh class (deprecated) {{{2
 class Sh(Cmd):
     "Run a command immediately in the shell."
     def __init__(self, cmd, modes=None, stdin=None, encoding=None):
@@ -549,62 +591,22 @@ class Sh(Cmd):
         self.run(stdin)
 
 
-# run {{{2
-def run(cmd, stdin=None, accept=0, shell=False):
-    "Run a command without capturing its output."
-    import subprocess
+# Start class {{{2
+class Start(Cmd):
+    "Run a command immediately, don't wait for it to exit"
+    def __init__(self, cmd, modes=None, stdin=None, encoding=None):
+        self.cmd = cmd
+        self.stdin = None
+        self.use_shell = False
+        self.save_stdout = False
+        self.save_stderr = False
+        self.wait_for_termination = True
+        self.accept = (0,)
+        self.encoding = DEFAULT_ENCODING if not encoding else encoding
+        self._interpret_modes(modes)
+        self._sanity_check()
+        self.start(stdin)
 
-    # I have never been able to get Popen to work properly if cmd is not
-    # a string when using the shell
-    if shell and not is_str(cmd):
-        cmd = ' '.join(to_str(c) for c in cmd)
-    elif is_str(cmd) and not shell:
-        cmd = cmd.split()
-
-    streams = {} if stdin is None else {'stdin': subprocess.PIPE}
-    process = subprocess.Popen(cmd, shell=shell, **streams)
-    if stdin is not None:
-        process.stdin.write(stdin.encode(DEFAULT_ENCODING))
-        process.stdin.close()
-    status = process.wait()
-    if _Accept(accept).unacceptable(status):
-        raise OSError(None, "unexpected exit status (%d)." % status)
-    return status
-
-# sh {{{2
-def sh(cmd, stdin=None, accept=0, shell=True):
-    "Execute a command with a shell without capturing its output"
-    return run(cmd, stdin, accept, shell=True)
-
-
-# bg {{{2
-def bg(cmd, stdin=None, shell=False):
-    "Execute a command in the background without capturing its output."
-    import subprocess
-    streams = {'stdin': subprocess.PIPE} if stdin is not None else {}
-    process = subprocess.Popen(cmd, shell=shell, **streams)
-    if stdin is not None:
-        process.stdin.write(stdin.encode(DEFAULT_ENCODING))
-        process.stdin.close()
-    return process.pid
-
-# shbg {{{2
-def shbg(cmd, stdin=None, shell=True):
-    "Execute a command with a shell in the background without capturing its output."
-    return bg(cmd, stdin, shell=True)
-
-
-# which {{{2
-def which(name, path=None, flags=os.X_OK):
-    "Search PATH for executable files with the given name."
-    result = []
-    if path is None:
-        path = os.environ.get('PATH', '')
-    for p in path.split(os.pathsep):
-        p = os.path.join(p, name)
-        if os.access(p, flags):
-            result.append(p)
-    return result
 
 # _Accept class {{{2
 class _Accept(object):
@@ -639,3 +641,61 @@ class _Accept(object):
             return status not in self.accept
         else:
             return status < 0 or status > self.accept
+
+
+# run (deprecated) {{{2
+def run(cmd, stdin=None, accept=0, shell=False):
+    "Run a command without capturing its output."
+    import subprocess
+
+    # I have never been able to get Popen to work properly if cmd is not
+    # a string when using the shell
+    if shell and not is_str(cmd):
+        cmd = ' '.join(to_str(c) for c in cmd)
+    elif is_str(cmd) and not shell:
+        cmd = cmd.split()
+
+    streams = {} if stdin is None else {'stdin': subprocess.PIPE}
+    process = subprocess.Popen(cmd, shell=shell, **streams)
+    if stdin is not None:
+        process.stdin.write(stdin.encode(DEFAULT_ENCODING))
+        process.stdin.close()
+    status = process.wait()
+    if _Accept(accept).unacceptable(status):
+        raise OSError(None, "unexpected exit status (%d)." % status)
+    return status
+
+# sh (deprecated) {{{2
+def sh(cmd, stdin=None, accept=0, shell=True):
+    "Execute a command with a shell without capturing its output"
+    return run(cmd, stdin, accept, shell=True)
+
+
+# bg (deprecated) {{{2
+def bg(cmd, stdin=None, shell=False):
+    "Execute a command in the background without capturing its output."
+    import subprocess
+    streams = {'stdin': subprocess.PIPE} if stdin is not None else {}
+    process = subprocess.Popen(cmd, shell=shell, **streams)
+    if stdin is not None:
+        process.stdin.write(stdin.encode(DEFAULT_ENCODING))
+        process.stdin.close()
+    return process.pid
+
+# shbg (deprecated) {{{2
+def shbg(cmd, stdin=None, shell=True):
+    "Execute a command with a shell in the background without capturing its output."
+    return bg(cmd, stdin, shell=True)
+
+
+# which {{{2
+def which(name, path=None, flags=os.X_OK):
+    "Search PATH for executable files with the given name."
+    result = []
+    if path is None:
+        path = os.environ.get('PATH', '')
+    for p in path.split(os.pathsep):
+        p = os.path.join(p, name)
+        if os.access(p, flags):
+            result.append(p)
+    return result

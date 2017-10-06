@@ -447,46 +447,54 @@ execution. For example::
    diff = Cmd(['gvim', '-d', lfile, rfile], 'w')
    diff.run()
    try:
-       diff.wait()
+       status = diff.wait()
    except KeyboardInterrupt:
        diff.kill()
 
+You can pass a string to run(), which is passed to stdin of the command. If you 
+choose not to, then stdin left alone.
 
-Run and Sh
-~~~~~~~~~~
 
-Run and Sh are subclasses of Cmd. They are the same except that they both run 
-the program right away (you would not explicitly run the program with the 
-run()).  Run does not use a shell by default whereas Sh does.
+Run
+~~~
 
-   >>> echo = Run('echo hello world > helloworld', 'SoeW')
+Run subclasses Cmd. It basically constructs the process and then immediately 
+calls the run() method. It takes the same arguments as Cmd, but an additional 
+argument that allows you to specify stdin for the process::
+
+   Run(cmd[, modes][, stdin][, encoding])
+
+Run expect you to wait for the process to end, either by specify the 'W' mode, 
+or by calling wait().  For example::
+
+   >>> echo = Run('cat > helloworld', 'SoeW', 'hello world')
    >>> echo.status
    0
 
-   >>> cat = Run(['cat', 'helloworld'], 'sOeW')
-   >>> cat.status
+   >>> cat = Run(['cat', 'helloworld'], 'sOew')
+   >>> cat.wait()
    0
 
    >>> print(cat.stdout)
    hello world
-   <BLANKLINE>
 
-run, sh, bg, shbg
-~~~~~~~~~~~~~~~~~
 
-These are functions that run a program without capturing its output::
+Start
+~~~~~
 
-   run(cmd, stdin=None, accept=0, shell=False)
-   sh(cmd, stdin=None, accept=0, shell=True)
-   bg(cmd, stdin=None, shell=False)
-   shbg(cmd, stdin=None, shell=True)
+Start also subclasses Cmd. It is similar to Run in that it immediately executes 
+the command, but it differs in that it does not expect you to wait for the 
+command to terminate. You may specify stdin to the command if you wish, but 
+since you are not waiting for the command to terminate you cannot access stdout, 
+stderr or the exit status.  Effectively, Start() kicks off the process and then 
+ignores it.  You may pass wait or accept in the mode string, but they are 
+ignored. If you select either stdout or stderr to be captured, then are wired to 
+/dev/null, meaning that the selected output is swallowed and discarded.
 
-run and sh block until the program completes, whereas bg and shbg do not. run 
-and bg do not use a shell by default where as sh and shbg do. accept specifies 
-the exit status codes that will be accepted without being treated as being an 
-error. If you specify a simple number, than any code greater than that value is 
-treated as an error. If you provide a collection of numbers in a tuple or list, 
-then any code not found in the collection is considered an error.
+::
+
+   >>> cat = Start('cat helloworld', 'sOe')
+
 
 which
 ~~~~~
