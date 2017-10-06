@@ -411,10 +411,10 @@ For example, to run diff you might use::
    ...     line2
    ... ''').strip()
 
-   >>> ref_bytes_written = to_path('./ref').write_text(ref)
-   >>> test_bytes_written = to_path('./test').write_text(test)
+   >>> ref_bytes_written = to_path('./REF').write_text(ref)
+   >>> test_bytes_written = to_path('./TEST').write_text(test)
 
-   >>> cat = Cmd(['cat', 'test'], 'sOeW')
+   >>> cat = Cmd(['cat', 'TEST'], 'sOeW')
    >>> cat.run()
    0
 
@@ -422,7 +422,7 @@ For example, to run diff you might use::
    line1
    line2
 
-   >>> diff = Cmd('diff test ref', 'sOEW1')
+   >>> diff = Cmd('diff TEST REF', 'sOEW1')
    >>> status = diff.run()
    >>> status
    1
@@ -451,8 +451,19 @@ execution. For example::
    except KeyboardInterrupt:
        diff.kill()
 
-You can pass a string to run(), which is passed to stdin of the command. If you 
-choose not to, then stdin left alone.
+Casting the object to a string returns the command itself::
+
+   >>> print(str(cat))
+   cat TEST
+
+If you call run(), then you should either specify 'W' as the wait mode, or you 
+should call the wait() method. If you do not, then any string you specified as 
+stdin is not applied. If your intension is to kick off a process and not wait 
+for it to finish, you should use start() instead. It also allows you to specify 
+a string to pass to stdin, however you cannot access stdout, stderr, or the exit 
+status. If you specify the 'O' or 'E' modes when using start(), those outputs 
+are simply discarded. This is a useful way of discarding uninteresting 
+diagnostics from the program you are calling.
 
 
 Run
