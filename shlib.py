@@ -339,8 +339,8 @@ def _leaves(path, hidden=False):
     for each in os.scandir(path):
         if each.is_dir(follow_symlinks=False):
             for e in _leaves(each):
-                if hidden or not e.name.startswith('.'):
-                    yield e.path
+                if hidden or not e.startswith('.'):
+                    yield e
         else:
             if hidden or not each.name.startswith('.'):
                 yield each.path
