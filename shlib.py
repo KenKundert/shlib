@@ -391,8 +391,9 @@ class Cmd(object):
         M,N,...: accept status codes M, N, ...
     """
     # __init__ {{{3
-    def __init__(self, cmd, modes=None, encoding=None):
+    def __init__(self, cmd, modes=None, env=None, encoding=None):
         self.cmd = cmd
+        self.env = env
         self.use_shell = False
         self.save_stdout = False
         self.save_stderr = False
@@ -460,7 +461,7 @@ class Cmd(object):
 
         # run the command
         process = subprocess.Popen(
-            cmd, shell=self.use_shell, **streams
+            cmd, shell=self.use_shell, env=self.env, **streams
         )
 
         # store needed information and wait for termination if desired
@@ -502,7 +503,7 @@ class Cmd(object):
 
         # run the command
         process = subprocess.Popen(
-            cmd, shell=self.use_shell, **streams
+            cmd, shell=self.use_shell, env=self.env, **streams
         )
 
         # store needed information and wait for termination if desired
@@ -562,7 +563,7 @@ class Cmd(object):
 # Run class {{{2
 class Run(Cmd):
     "Run a command immediately."
-    def __init__(self, cmd, modes=None, stdin=None, encoding=None):
+    def __init__(self, cmd, modes=None, stdin=None, env=None, encoding=None):
         self.cmd = cmd
         self.stdin = None
         self.use_shell = False
@@ -570,6 +571,7 @@ class Run(Cmd):
         self.save_stderr = False
         self.wait_for_termination = True
         self.accept = (0,)
+        self.env = env
         self.encoding = DEFAULT_ENCODING if not encoding else encoding
         self._interpret_modes(modes)
         self._sanity_check()
@@ -578,13 +580,14 @@ class Run(Cmd):
 # Sh class (deprecated) {{{2
 class Sh(Cmd):
     "Run a command immediately in the shell."
-    def __init__(self, cmd, modes=None, stdin=None, encoding=None):
+    def __init__(self, cmd, modes=None, stdin=None, env=None, encoding=None):
         self.cmd = cmd
         self.stdin = None
         self.use_shell = True
         self.save_stdout = False
         self.save_stderr = False
         self.wait_for_termination = True
+        self.env = env
         self.encoding = DEFAULT_ENCODING if not encoding else encoding
         self._interpret_modes(modes)
         self._sanity_check()
@@ -594,7 +597,7 @@ class Sh(Cmd):
 # Start class {{{2
 class Start(Cmd):
     "Run a command immediately, don't wait for it to exit"
-    def __init__(self, cmd, modes=None, stdin=None, encoding=None):
+    def __init__(self, cmd, modes=None, stdin=None, env=None, encoding=None):
         self.cmd = cmd
         self.stdin = None
         self.use_shell = False
@@ -602,6 +605,7 @@ class Start(Cmd):
         self.save_stderr = False
         self.wait_for_termination = True
         self.accept = (0,)
+        self.env = env
         self.encoding = DEFAULT_ENCODING if not encoding else encoding
         self._interpret_modes(modes)
         self._sanity_check()

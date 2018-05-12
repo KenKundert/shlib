@@ -473,7 +473,7 @@ Run subclasses Cmd. It basically constructs the process and then immediately
 calls the run() method. It takes the same arguments as Cmd, but an additional 
 argument that allows you to specify stdin for the process::
 
-   Run(cmd[, modes][, stdin][, encoding])
+   Run(cmd[, modes][, stdin][, env][, encoding])
 
 Run expect you to wait for the process to end, either by specify the 'W' mode, 
 or by calling wait().  For example::
