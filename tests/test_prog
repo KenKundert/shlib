@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+
+import sys
+
+sys.stdout.write('this is stdout.\n')
+sys.stderr.write('this is stderr.\n')
+sys.exit(int(sys.argv[1]))

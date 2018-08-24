@@ -4,7 +4,7 @@
 # shell-script like things relatively easily in Python.
 
 # License {{{1
-# Copyright (C) 2016 Kenneth S. Kundert
+# Copyright (C) 2016-2018 Kenneth S. Kundert
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ __version__ = '0.7.3'
 # Imports {{{1
 from extended_pathlib import Path
 import itertools
+import shlex
 import shutil
 import errno
 import os
@@ -31,6 +32,7 @@ import sys
 
 # Parameters {{{1
 DEFAULT_ENCODING = 'utf-8'
+preferences = {}
 
 # Utilities {{{1
 # is_str {{{2
@@ -79,6 +81,50 @@ def os_error(errno, filename=None):
         raise OSError(errno, os.strerror(errno), str(filename))
     else:
         raise OSError(errno, os.strerror(errno))
+
+# split_cmd {{{2
+def split_cmd(cmd):
+    from shlex import split
+    return split(cmd)
+
+# quote_arg {{{2
+def quote_arg(arg):
+    """Return a shell-escaped version of the string *arg*."""
+    try:
+        from shlex import quote
+    except ImportError:
+        try:
+            from pipes import quote
+        except ImportError:
+            def quote(arg):
+                if not arg:
+                    return "''"
+                if re.search(r'[^\w@%+=:,./-]', arg, re.ASCII) is None:
+                    return s
+                return "'" + arg.replace("'", "'\"'\"'") + "'"
+    return quote(str(arg))
+
+# use_log {{{2
+def use_log(log):
+    if log is None:
+        return preferences.get('log_cmd')
+    return log
+
+# Preferences {{{1
+def set_prefs(**kwargs):
+    """Set ShLib preferences
+
+    Args:
+        use_inform (bool):
+            Use inform for error reporting in the Cmd class and its subclasses.
+            This provides a richer form of error reporting than simply using the
+            OSError. Requires that inform be installed.
+        log_cmd (bool):
+            Log the command invocation and exit status in the Cmd class and its
+            subclasses. Requires that inform be installed.
+    """
+    preferences.update(kwargs)
+
 
 # File system utility functions (cp, mv, rm, ln, touch, mkdir, ls, etc.) {{{1
 # cp {{{2
@@ -218,7 +264,7 @@ def ls(*paths, **kwargs):
 
     Args:
         paths: the paths to list ('.' if no paths given).
-        select: a returned path will match this glob string, use ** to enable 
+        select: a returned path will match this glob string, use **/* to enable 
             recursion
         reject: a returned path will not match this glob string
         only: specifies the type of returned paths, choose from 'file' or 'dir'
@@ -345,7 +391,9 @@ def _leaves(path, hidden=False):
             if hidden or not each.name.startswith('.'):
                 yield each.path
 
+# leaves()  {{{2
 def leaves(path, hidden=False):
+    """Recursively descend into a directory yielding all of the file."""
     for each in _leaves(str(path)):
         yield Path(each)
 
@@ -373,7 +421,7 @@ try:
 except ImportError:
     pass
 
-# Execution classes and functions (Cmd, Run, Sh, run, bg, shbg, which){{{1
+# Execution classes and functions (Cmd, Run, Sh, Start, run, bg, shbg, which) {{{1
 # Command class {{{2
 class Cmd(object):
     """
@@ -384,24 +432,44 @@ class Cmd(object):
         S, s: Use, or do not use, shell
         O, o: Capture, or do not capture, stdout
         E, e: Capture, or do not capture, stderr
+        M, m: Merge, or do not merge, stderr into stdout (M overrides E, e)
         W, s: Wait, or do not wait, for command to terminate before proceeding
-    only one of the following may be given, and it must be given last
+
+        Only one of the following may be given, and it must be given last:
         *: accept any output status code
         N: accept any output status code equal to N or less
         M,N,...: accept status codes M, N, ...
+    env is a dictionary of environment variable and their values.
+    encoding is used on the input and output streams when converting them to and
+        from strings.
+    log specifies whether details about the command should be sent to log file.
+        May be True, False, or None. If None, then behavior is set by log_cmd
+        preference.
+    option_args is used when rendering command to logfile, it indicates how many
+        arguments each option takes.
+
+    An exception is raised if exit status is not acceptable. By default an
+    OSError is raised, however if the *use_inform* preference is true, then
+    inform.Error is used. In this case the error includes attributes that can be
+    used to access the stdout, stderr, status, cmd, and msg.
     """
     # __init__ {{{3
-    def __init__(self, cmd, modes=None, env=None, encoding=None):
+    def __init__(
+        self, cmd, modes=None, env=None, encoding=None,
+        log=None, option_args=None
+    ):
         self.cmd = cmd
         self.env = env
         self.use_shell = False
         self.save_stdout = False
         self.save_stderr = False
+        self.merge_stderr_into_stdout = False
         self.status = None
         self.wait_for_termination = True
         self.encoding = DEFAULT_ENCODING if encoding is None else encoding
+        self.log = log
+        self.option_args = option_args
         self._interpret_modes(modes)
-        self._sanity_check()
 
     # _interpret_modes {{{3
     def _interpret_modes(self, modes):
@@ -415,19 +483,12 @@ class Cmd(object):
                 elif mode == 'O': self.save_stdout = True
                 elif mode == 'e': self.save_stderr = False
                 elif mode == 'E': self.save_stderr = True
+                elif mode == 'm': self.merge_stderr_into_stdout = False
+                elif mode == 'M': self.merge_stderr_into_stdout = True
                 elif mode == 'w': self.wait_for_termination = False
                 elif mode == 'W': self.wait_for_termination = True
                 else: accept = modes[i:]; break
         self.accept = _Accept(accept)
-
-    # _sanity_check {{{3
-    def _sanity_check(self):
-        if self.save_stdout or self.save_stderr:
-            #assert self.wait_for_termination
-            pass
-            # turns out this is a valid use model. Basically stdout or stderr 
-            # is swallowed up and does not bother the user. It becomes 
-            # available if one waits for the process to terminate.
 
     # run {{{3
     def run(self, stdin=None):
@@ -445,10 +506,14 @@ class Cmd(object):
         import subprocess
 
         if is_str(self.cmd):
-            import shlex
-            cmd = self.cmd if self.use_shell else shlex.split(self.cmd)
+            cmd = self.cmd if self.use_shell else split_cmd(self.cmd)
         else:
-            cmd = [to_str(c) for c in self.cmd]
+            # cannot use to_str() because it can change some arguments when not intended.
+            # this is particularly problematic the duplicity arguments in embalm
+            cmd = [str(c) for c in self.cmd]
+        if use_log(self.log):
+            from inform import log
+            log('Running:', render_command(cmd, option_args=self.option_args))
 
         # indicate streams to intercept
         streams = {}
@@ -458,6 +523,8 @@ class Cmd(object):
             streams['stdout'] = subprocess.PIPE
         if self.save_stderr:
             streams['stderr'] = subprocess.PIPE
+        if self.merge_stderr_into_stdout:
+            streams['stderr'] = subprocess.STDOUT
 
         # run the command
         process = subprocess.Popen(
@@ -482,16 +549,19 @@ class Cmd(object):
         import subprocess
 
         if is_str(self.cmd):
-            import shlex
-            cmd = self.cmd if self.use_shell else shlex.split(self.cmd)
+            cmd = self.cmd if self.use_shell else split_cmd(self.cmd)
         else:
             cmd = self.cmd
+        if use_log(self.log):
+            from inform import log
+            log('Running:', render_command(cmd, option_args=self.option_args))
 
         if self.save_stdout or self.save_stderr:
             try:
                 DEVNULL = subprocess.DEVNULL
             except AttributeError:
                 DEVNULL = open(os.devnull, 'wb')
+        assert self.merge_stderr_into_stdout is False, 'M not supported, use E'
 
         streams = {}
         if stdin is not None:
@@ -532,14 +602,28 @@ class Cmd(object):
         self.stderr = None if stderr is None else stderr.decode(self.encoding)
         self.status = process.returncode
 
+        if use_log(self.log):
+            from inform import log
+            log('Exit status:', self.status)
+
         # check return code
         if self.accept.unacceptable(self.status):
             if self.stderr:
-                raise OSError(None, self.stderr.strip())
+                msg = self.stderr.strip()
             else:
-                raise OSError(
-                    None, "unexpected exit status (%d)" % self.status
+                msg = 'unexpected exit status (%d)' % self.status
+            if preferences.get('use_inform'):
+                from inform import Error
+                raise Error(
+                    msg = msg,
+                    status = self.status,
+                    stdout = self.stdout,
+                    stderr = self.stderr,
+                    cmd = render_command(self.cmd),
+                    template = '{msg}'
                 )
+            else:
+                raise OSError(None, msg)
         return self.status
 
     # kill {{{3
@@ -547,68 +631,101 @@ class Cmd(object):
         self.process.kill()
         self.process.wait()
 
-    # split {{{3
-    @staticmethod
-    def split(cmd):
-        import shlex
-        return shlex.split(cmd)
-
     # __str__ {{{3
     def __str__(self):
         if is_str(self.cmd):
             return self.cmd
         else:
-            return ' '.join(to_str(c) for c in self.cmd)
+            return ' '.join(str(c) for c in self.cmd)
+
 
 # Run class {{{2
 class Run(Cmd):
-    "Run a command immediately."
-    def __init__(self, cmd, modes=None, stdin=None, env=None, encoding=None):
+    """Run a command immediately.
+
+    See Cmd for information on the arguments.
+    Default mode is 'soeW0'.
+
+    Common Examples:
+       Run command without capturing stdout and stderr:
+           Run(['grep', filename], modes='soeW1')
+       Run command and capture stdout; stderr is not captured:
+           output = Run(['grep', filename], modes='sOeW1').stdout
+       Run command and capture stdout; merge stderr into stdout:
+           output = Run(['grep', filename], modes='sOMW1').stdout
+    """
+    def __init__(
+        self, cmd, modes=None, stdin=None, env=None, encoding=None,
+        log=None, option_args=None
+    ):
         self.cmd = cmd
         self.stdin = None
         self.use_shell = False
         self.save_stdout = False
         self.save_stderr = False
+        self.merge_stderr_into_stdout = False
         self.wait_for_termination = True
         self.accept = (0,)
         self.env = env
         self.encoding = DEFAULT_ENCODING if not encoding else encoding
+        self.log = log
+        self.option_args = option_args
         self._interpret_modes(modes)
-        self._sanity_check()
         self.run(stdin)
 
 # Sh class (deprecated) {{{2
 class Sh(Cmd):
-    "Run a command immediately in the shell."
-    def __init__(self, cmd, modes=None, stdin=None, env=None, encoding=None):
+    """Run a command immediately in the shell.
+
+    See Cmd for information on the arguments, see Run for examples.
+    Sh() is the same as Run except S mode is default.
+    Default mode is 'SoeW0'.
+    """
+    def __init__(
+        self, cmd, modes=None, stdin=None, env=None, encoding=None,
+        log=None, option_args=None
+    ):
         self.cmd = cmd
         self.stdin = None
         self.use_shell = True
         self.save_stdout = False
         self.save_stderr = False
+        self.merge_stderr_into_stdout = False
         self.wait_for_termination = True
         self.env = env
         self.encoding = DEFAULT_ENCODING if not encoding else encoding
+        self.log = log
+        self.option_args = option_args
         self._interpret_modes(modes)
-        self._sanity_check()
         self.run(stdin)
 
 
 # Start class {{{2
 class Start(Cmd):
-    "Run a command immediately, don't wait for it to exit"
-    def __init__(self, cmd, modes=None, stdin=None, env=None, encoding=None):
+    """Run a command immediately, don't wait for it to exit.
+
+    See Cmd for information on the arguments.
+    Start() is the similar to Run when using 'w' mode.  The difference is if you
+    specify O or E modes, those streams are suppressed rather than being
+    captured.
+    """
+    def __init__(
+        self, cmd, modes=None, stdin=None, env=None, encoding=None,
+        log=None, option_args=None
+    ):
         self.cmd = cmd
         self.stdin = None
         self.use_shell = False
         self.save_stdout = False
         self.save_stderr = False
-        self.wait_for_termination = True
+        self.merge_stderr_into_stdout = False
+        self.wait_for_termination = False
         self.accept = (0,)
         self.env = env
         self.encoding = DEFAULT_ENCODING if not encoding else encoding
+        self.log = log
+        self.option_args = option_args
         self._interpret_modes(modes)
-        self._sanity_check()
         self.start(stdin)
 
 
@@ -703,3 +820,63 @@ def which(name, path=None, flags=os.X_OK):
         if os.access(p, flags):
             result.append(p)
     return result
+
+# render_command {{{2
+def render_command(cmd, option_args=None, width=70):
+    """ Render a command.
+
+    Each argument and option is placed on a separate line, while keeping
+    argument to options on the same line as the option.  Placing each option and
+    argument on its own line allows complicated commands with long arguments to
+    be displayed cleanly.  The formatting is such that you should be able to
+    feed the result directly to a shell and have command execute properly.
+
+    By default each option is assumed to have no arguments. You can pass in a
+    dictionary that maps the options to the number of arguments it expects.
+
+    Args:
+        cmd (str or list of str):
+            The command.
+        option_args (dictionary, keys are strings, values are integers):
+            The keys are options and the value is the number of arguments for
+            that option.
+        width (int):
+            If length of resulting line would be width or less, return as a
+            single line, otherwise place each argument and option on separate
+            line.
+
+    >>> args = {'--dux': 2, '-d': 2, '--tux': 1}
+    >>> print(render_command('bux --dux a b -d c d --tux e f g h', args))
+    bux --dux a b -d c d --tux e f g h
+
+    >>> print(render_command('bux --dux a b -d c d --tux e f g h', args, width=0))
+    bux \
+        --dux a b \
+        -d c d \
+        --tux e \
+        f \
+        g \
+        h
+
+    """
+    if option_args is None:
+        option_args = {}
+
+    if is_str(cmd):
+        components = split_cmd(cmd)
+    else:
+        components = [quote_arg(c) for c in cmd]
+        cmd = ' '.join(components)
+    if len(cmd) <= width:
+        return cmd
+
+    components.reverse()
+    lines = []
+    while components:
+        opt = components.pop()
+        num_args = option_args.get(opt, 0)
+        argument = [quote_arg(opt)]
+        for i in range(num_args):
+            argument.append(quote_arg(components.pop()))
+        lines.append(' '.join(argument))
+    return ' \\\n    '.join(lines)
