@@ -21,6 +21,7 @@ setup(
     install_requires=[
         'braceexpand',  # this one is optional
         'extended_pathlib>=0.4',
+        # 'inform',  # this one is optional
     ],
     setup_requires=[
         'pytest-runner>=2.0',
