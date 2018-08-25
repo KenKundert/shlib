@@ -1,7 +1,7 @@
 ShLib - Shell Library
 =====================
 
-| Version: 0.7.5
+| Version: 0.8.0
 | Released: 2018-08-24
 |
 
