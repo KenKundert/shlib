@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 
-__version__ = '0.7.4'
-__released__ = '2018-06-29'
+__version__ = '0.7.5'
+__released__ = '2018-08-24'
 
 # Imports {{{1
 from extended_pathlib import Path

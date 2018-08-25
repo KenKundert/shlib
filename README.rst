@@ -1,8 +1,8 @@
 ShLib - Shell Library
 =====================
 
-| Version: 0.7.4
-| Released: 2018-06-29
+| Version: 0.7.5
+| Released: 2018-08-24
 |
 
 A light-weight package with few dependencies that allows users to do 
