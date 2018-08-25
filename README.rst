@@ -1,6 +1,10 @@
 ShLib - Shell Library
 =====================
 
+| Version: 0.7.4
+| Released: 2018-06-29
+|
+
 A light-weight package with few dependencies that allows users to do 
 shell-script like things relatively easily in Python. Is a natural complement to 
 the pathlib library. Pathlib does pretty much what you would like to do with 

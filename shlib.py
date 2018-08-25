@@ -20,6 +20,7 @@
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 
 __version__ = '0.7.4'
+__released__ = '2018-06-29'
 
 # Imports {{{1
 from extended_pathlib import Path
