@@ -5,6 +5,18 @@ ShLib - Shell Library
 | Released: 2018-08-24
 |
 
+.. image:: https://img.shields.io/travis/KenKundert/shlib/master.svg
+    :target: https://travis-ci.org/KenKundert/shlib
+
+.. image:: https://img.shields.io/coveralls/KenKundert/shlib.svg
+    :target: https://coveralls.io/r/KenKundert/shlib
+
+.. image:: https://img.shields.io/pypi/v/shlib.svg
+    :target: https://pypi.python.org/pypi/shlib
+
+.. image:: https://img.shields.io/pypi/pyversions/shlib.svg
+    :target: https://pypi.python.org/pypi/shlib/
+
 A light-weight package with few dependencies that allows users to do 
 shell-script like things relatively easily in Python. Is a natural complement to 
 the pathlib library. Pathlib does pretty much what you would like to do with 
@@ -46,18 +58,6 @@ Installation
 ------------
 
 Use 'pip3 install shlib' to install. Requires Python2.7 or Python3.3 or better.
-
-.. image:: https://img.shields.io/travis/KenKundert/shlib/master.svg
-    :target: https://travis-ci.org/KenKundert/shlib
-
-.. image:: https://img.shields.io/coveralls/KenKundert/shlib.svg
-    :target: https://coveralls.io/r/KenKundert/shlib
-
-.. image:: https://img.shields.io/pypi/v/shlib.svg
-    :target: https://pypi.python.org/pypi/shlib
-
-.. image:: https://img.shields.io/pypi/pyversions/shlib.svg
-    :target: https://pypi.python.org/pypi/shlib/
 
 
 System Utility Functions
