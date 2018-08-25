@@ -59,9 +59,6 @@ Use 'pip3 install shlib' to install. Requires Python2.7 or Python3.3 or better.
 .. image:: https://img.shields.io/pypi/pyversions/shlib.svg
     :target: https://pypi.python.org/pypi/shlib/
 
-.. image:: https://img.shields.io/pypi/dd/shlib.svg
-    :target: https://pypi.python.org/pypi/shlib/
-
 
 System Utility Functions
 ------------------------

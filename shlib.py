@@ -826,25 +826,26 @@ def which(name, path=None, flags=os.X_OK):
 def render_command(cmd, option_args=None, width=70):
     """ Render a command.
 
-    Each argument and option is placed on a separate line, while keeping
-    argument to options on the same line as the option.  Placing each option and
-    argument on its own line allows complicated commands with long arguments to
-    be displayed cleanly.  The formatting is such that you should be able to
-    feed the result directly to a shell and have command execute properly.
+    Converts the command to a string.  The formatting is such that you should be
+    able to feed the result directly to a shell and have command execute
+    properly.
 
-    By default each option is assumed to have no arguments. You can pass in a
-    dictionary that maps the options to the number of arguments it expects.
+    *cmd* is the command to render. It may be a string or a list of strings.
 
-    Args:
-        cmd (str or list of str):
-            The command.
-        option_args (dictionary, keys are strings, values are integers):
-            The keys are options and the value is the number of arguments for
-            that option.
-        width (int):
-            If length of resulting line would be width or less, return as a
-            single line, otherwise place each argument and option on separate
-            line.
+    *option_args* is a dictionary.  The keys are options accepted by the command
+    and the value is the number of arguments for that option.  If an option is
+    not found, it is assumed to have 0 arguments.
+
+    *width* specifies how long the string must be before it is broken into
+    multiple lines.  If length of resulting line would be width or less, return
+    as a single line, otherwise place each argument and option on separate line.
+
+    If the command is rendered as multiple lines, each argument and option is
+    placed on a separate line, while keeping argument to options on the same
+    line as the option.  Placing each option and argument on its own line allows
+    complicated commands with long arguments to be displayed cleanly.
+
+    For example::
 
     >>> args = {'--dux': 2, '-d': 2, '--tux': 1}
     >>> print(render_command('bux --dux a b -d c d --tux e f g h', args))
