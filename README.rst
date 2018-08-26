@@ -601,7 +601,7 @@ Error Reporting with Inform
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The *Cmd* class and its subclasses (*Run* and *Start*) raise an `Inform 
-<https://inform.readthedocs.io>` Error if the *use_inform* preference was 
+<https://inform.readthedocs.io>`_ Error if the *use_inform* preference was 
 specified. This allows for rich error reporting. In particular, the command, 
 exit status, stdout and stderr are all returned with the exception and are 
 available to insert into an error message. For example::
