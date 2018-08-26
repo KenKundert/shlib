@@ -606,18 +606,20 @@ specified. This allows for rich error reporting. In particular, the command,
 exit status, stdout and stderr are all returned with the exception and are 
 available to insert into an error message. For example::
 
-    from shlib import Run, set_prefs
-    from inform import Error
+    >> from shlib import Run, set_prefs
+    >> from inform import Error
 
-    set_prefs(use_inform=True)
+    >> set_prefs(use_inform=True)
 
-    try:
-        c = Run(command, 'sOEW0')
-    except Error as e:
-        e.report(template=(
-            '"{cmd}" exits with status {status}.\n    {stderr}.',
-            '"{cmd}" exits with status {status}.',
-        ))
+    >> try:
+    ..     c = Run('sort words', 'sOEW0')
+    .. except Error as e:
+    ..     e.report(template=(
+    ..         '"{cmd}" exits with status {status}.\n    {stderr}',
+    ..         '"{cmd}" exits with status {status}.',
+    ..     ))
+    error: "sort words" exits with status 2.
+        sort: cannot read: words: No such file or directory.
 
 If command returns a non-zero exit status, an exception is raised and one of two 
 error messages are printed. The first is printed if *stderr* is not empty, and 
