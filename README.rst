@@ -595,3 +595,30 @@ available.
 *log_cmd* specifies that the command and its exit status should be written to 
 the *Inform* log file.  Use of this preference requires that *Inform* be 
 available.
+
+
+Error Reporting with Inform
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The *Cmd* class and its subclasses (*Run* and *Start*) raise an `Inform 
+<https://inform.readthedocs.io>` Error if the *use_inform* preference was 
+specified. This allows for rich error reporting. In particular, the command, 
+exit status, stdout and stderr are all returned with the exception and are 
+available to insert into an error message. For example::
+
+    from shlib import Run, set_prefs
+    from inform import Error
+
+    set_prefs(use_inform=True)
+
+    try:
+        c = Run(command, 'sOEW0')
+    except Error as e:
+        e.report(template=(
+            '"{cmd}" exits with status {status}.\n    {stderr}.',
+            '"{cmd}" exits with status {status}.',
+        ))
+
+If command returns a non-zero exit status, an exception is raised and one of two 
+error messages are printed. The first is printed if *stderr* is not empty, and 
+the second is printed if it is.

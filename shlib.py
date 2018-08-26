@@ -425,6 +425,7 @@ except ImportError:
 # Execution classes and functions (Cmd, Run, Sh, Start, run, bg, shbg, which) {{{1
 # Command class {{{2
 class Cmd(object):
+    # description {{{3
     """
     Specify a command
 
@@ -454,6 +455,7 @@ class Cmd(object):
     inform.Error is used. In this case the error includes attributes that can be
     used to access the stdout, stderr, status, cmd, and msg.
     """
+
     # __init__ {{{3
     def __init__(
         self, cmd, modes=None, env=None, encoding=None,
@@ -618,8 +620,8 @@ class Cmd(object):
                 raise Error(
                     msg = msg,
                     status = self.status,
-                    stdout = self.stdout,
-                    stderr = self.stderr,
+                    stdout = self.stdout.rstrip() if self.stdout else None,
+                    stderr = self.stderr.rstrip() if self.stderr else None,
                     cmd = render_command(self.cmd),
                     template = '{msg}'
                 )
