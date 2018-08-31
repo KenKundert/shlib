@@ -485,6 +485,9 @@ status. If you specify the 'O' or 'E' modes when using start(), those outputs
 are simply discarded. This is a useful way of discarding uninteresting 
 diagnostics from the program you are calling.
 
+*Cmd* also provides the *render* method, which converts the command to a string.  
+It takes the same optional arguments as does *render_command*.
+
 
 Run
 ~~~
@@ -590,7 +593,9 @@ as keyword arguments.
 *use_inform* indicates that the *Inform* exception *Error* should be raised if 
 the exit status from a command is not acceptable. If this not given or is False, 
 an OSError is raised instead.  Use of this preference requires that *Inform* be 
-available.
+available.  If *use_inform* is True, then inform.Error() is used by *Cmd* and 
+its subclasses (*Run* and *Start*). If *use_inform* is "all", then 
+inform.Error() is used by all *shlib* functions and classes.
 
 *log_cmd* specifies that the command and its exit status should be written to 
 the *Inform* log file.  Use of this preference requires that *Inform* be 

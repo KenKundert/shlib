@@ -64,7 +64,8 @@ def test_run_ground():
     except Error as e:
         assert str(e) == 'this is stderr.'
         assert e.cmd == './test_prog 1'
-        assert e.stdout == 'this is stdout.\n'
-        assert e.stderr == 'this is stderr.\n'
+        assert e.stdout == 'this is stdout.'
+        assert e.stderr == 'this is stderr.'
         assert e.status == 1
         assert e.msg == 'this is stderr.'
+    set_prefs(use_inform=False)
