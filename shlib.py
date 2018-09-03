@@ -97,12 +97,13 @@ def quote_arg(arg):
     except ImportError:
         try:
             from pipes import quote
+            import re
         except ImportError:
             def quote(arg):
                 if not arg:
                     return "''"
                 if re.search(r'[^\w@%+=:,./-]', arg, re.ASCII) is None:
-                    return s
+                    return arg
                 return "'" + arg.replace("'", "'\"'\"'") + "'"
     return quote(str(arg))
 
