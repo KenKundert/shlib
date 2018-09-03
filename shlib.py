@@ -76,36 +76,13 @@ def to_str(path):
     # string.
     return str(to_path(path))
 
-# _error {{{2
-#     Raise an error based on the errno.
-def _error(errno, filename=None):
-    if preferences.get('use_inform') == 'all':
-        from inform import Error, full_stop
-        raise Error(
-            msg = full_stop(os.strerror(errno)),
-            errno = errno,
-            filename = filename,
-            template = ('{filename}: {msg}', '{msg}')
-        )
+# os_error {{{2
+# Raise an error based on the errno.
+def os_error(errno, filename=None):
     if filename:
         raise OSError(errno, os.strerror(errno), str(filename))
     else:
         raise OSError(errno, os.strerror(errno))
-
-# _os_error {{{2
-#     Process an OSError.
-def _os_error(e, filename=None, ignore=None):
-    if ignore and e.errno == ignore:
-        return
-    if preferences.get('use_inform') == 'all':
-        from inform import Error, full_stop
-        raise Error(
-            msg = full_stop(os.strerror(e.errno)),
-            errno = e.errno,
-            filename = e.filename,
-            template = ('{filename}: {msg}', '{msg}')
-        )
-    raise
 
 # split_cmd {{{2
 def split_cmd(cmd):
@@ -140,11 +117,10 @@ def set_prefs(**kwargs):
     """Set ShLib preferences
 
     Args:
-        use_inform (bool or 'all'):
+        use_inform (bool):
             Use inform for error reporting in the Cmd class and its subclasses.
             This provides a richer form of error reporting than simply using the
             OSError. Requires that inform be installed.
-            If *use_inform* is 'all', inform.Error() is used for all errors.
         log_cmd (bool):
             Log the command invocation and exit status in the Cmd class and its
             subclasses. Requires that inform be installed.
@@ -159,30 +135,24 @@ def cp(*paths):
     dest = to_path(paths[-1])
     srcs = list(to_paths(paths[:-1]))
     if dest.is_dir():
-        try:
-            for src in srcs:
-                if src.is_dir():
-                    fulldest = Path(dest, src.name)
-                    # required because dest cannot exist with copytree
-                    shutil.copytree(to_str(src), to_str(fulldest))
-                else:
-                    shutil.copy2(to_str(src), to_str(dest))
-        except (OSError, IOError) as e:
-            _os_error(e)
+        for src in srcs:
+            if src.is_dir():
+                fulldest = Path(dest, src.name)
+                # required because dest cannot exist with copytree
+                shutil.copytree(to_str(src), to_str(fulldest))
+            else:
+                shutil.copy2(to_str(src), to_str(dest))
         return
     if len(srcs) > 1:
-        _error(errno.ENOTDIR, dest)
+        os_error(errno.ENOTDIR, dest)
     src = srcs[0]
     if src.is_dir() and dest.is_file():
-        _error(errno.EISDIR, src)
-    try:
-        if src.is_dir():
-            # src is directory and dest does not exist
-            shutil.copytree(to_str(src), to_str(dest))
-        else:
-            shutil.copy2(to_str(src), to_str(dest))
-    except (OSError, IOError) as e:
-        _os_error(e)
+        os_error(errno.EISDIR, src)
+    if src.is_dir():
+        # src is directory and dest does not exist
+        shutil.copytree(to_str(src), to_str(dest))
+    else:
+        shutil.copy2(to_str(src), to_str(dest))
 
 # mv {{{2
 def mv(*paths):
@@ -191,34 +161,25 @@ def mv(*paths):
     srcs = list(to_paths(paths[:-1]))
     assert len(srcs) >= 1
     if dest.is_dir():
-        try:
-            for src in srcs:
-                fulldest = Path(dest, src.name)
-                # required because dest cannot exist with shutil.move
-                shutil.move(to_str(src), to_str(fulldest))
-            return
-        except (OSError, IOError) as e:
-            _os_error(e)
+        for src in srcs:
+            fulldest = Path(dest, src.name)
+            # required because dest cannot exist with shutil.move
+            shutil.move(to_str(src), to_str(fulldest))
+        return
     else:
         if len(srcs) > 1:
-            _error(errno.ENOTDIR, dest)
+            os_error(errno.ENOTDIR, dest)
     src = srcs[0]
     if dest.is_file():
         if src.is_dir():
-            _error(errno.EISDIR, src)
+            os_error(errno.EISDIR, src)
         else:
             # overwrite destination
-            try:
-                shutil.move(to_str(src), to_str(dest))
-            except (OSError, IOError) as e:
-                _os_error(e)
+            shutil.move(to_str(src), to_str(dest))
     else:
         # destination does not exist
         assert not dest.exists()
-        try:
-            shutil.move(to_str(src), to_str(dest))
-        except (OSError, IOError) as e:
-            _os_error(e)
+        shutil.move(to_str(src), to_str(dest))
 
 
 # rm {{{2
@@ -230,28 +191,27 @@ def rm(*paths):
                 shutil.rmtree(to_str(path))
             else:
                 path.unlink()
-        except (IOError, OSError) as e:
-            _os_error(e, ignore=errno.ENOENT)
+        # suitable for python3 only
+        # except FileNotFoundError:
+        #     pass
+        except (IOError, OSError) as err:
+            # don't complain if the file never existed
+            if err.errno != errno.ENOENT:
+                raise
 
 # ln {{{2
 def ln(src, dest):
     "Create symbolic link."
     dest = to_path(dest)
-    try:
-        dest.symlink_to(src)
-    except (OSError, IOError) as e:
-        _os_error(e)
+    dest.symlink_to(src)
 
 # touch {{{2
 def touch(*paths):
     """
     Touch one or more files. If files do not exist, create them.
     """
-    try:
-        for path in to_paths(paths):
-            path.touch()
-    except (OSError, IOError) as e:
-        _os_error(e)
+    for path in to_paths(paths):
+        path.touch()
 
 # mkdir {{{2
 def mkdir(*paths):
@@ -259,49 +219,42 @@ def mkdir(*paths):
     Create a directory and all parent directories. Returns without complaint if
     directory already exists.
     """
-    try:
-        for path in to_paths(paths):
+    for path in to_paths(paths):
+        try:
             path.mkdir(parents=True)
                 # older versions of pathlib ignore exist_ok
                 # in Python3.5, just add exist_ok=True to arg list
-    except (IOError, OSError) as e:
-        _os_error(e, ignore=(errno.EEXIST if path.is_dir() else None))
+        # commented out version is suitable for Python3 only
+        # except FileExistsError:
+        #     if path.is_file():
+        #         raise
+        except (IOError, OSError) as err:
+            if err.errno != errno.EEXIST or path.is_file():
+                raise
 
 # cd {{{2
 class cd:
     def __init__(self, path):
         self.starting_dir = cwd()
-        try:
-            os.chdir(to_str(path))
-        except (OSError, IOError) as e:
-            _os_error(e)
+        os.chdir(to_str(path))
 
     # support __enter__ and __exit__ so cd can be called in a with statement.
     def __enter__(self):
         pass
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        try:
-            os.chdir(to_str(self.starting_dir))
-        except (OSError, IOError) as e:
-            _os_error(e)
+        os.chdir(to_str(self.starting_dir))
 
 # cwd {{{2
 def cwd():
     """Return current working directory as a pathlib path"""
-    try:
-        return Path.cwd()
-    except (OSError, IOError) as e:
-        _os_error(e)
+    return Path.cwd()
 
 # chmod {{{2
 def chmod(mode, *paths):
     "Change the mode bits of one or more file or directory"
-    try:
-        for path in to_paths(paths):
-            path.chmod(mode)
-    except (OSError, IOError) as e:
-        _os_error(e)
+    for path in to_paths(paths):
+        path.chmod(mode)
 
 # ls {{{2
 def ls(*paths, **kwargs):
@@ -365,18 +318,15 @@ def ls(*paths, **kwargs):
     select = to_str(select)
     retain_hidden = select.startswith('.') if hidden is None else hidden
     paths = paths if paths else ['.']
-    try:
-        for path in to_paths(paths):
-            if path.is_file() and acceptable(path):
-                if path.match(select):
-                    yield path
-            elif path.is_dir():
-                for each in path.glob(select):
-                    # glob() supports recursion so use it rather than iterdir()
-                    if acceptable(each):
-                        yield each
-    except (OSError, IOError) as e:
-        _os_error(e)
+    for path in to_paths(paths):
+        if path.is_file() and acceptable(path):
+            if path.match(select):
+                yield path
+        elif path.is_dir():
+            for each in path.glob(select):
+                # glob() supports recursion so use it rather than iterdir()
+                if acceptable(each):
+                    yield each
 
 # lsd {{{2
 def lsd(*args, **kwargs):
@@ -434,17 +384,14 @@ def lsf(*args, **kwargs):
 
 # Path list functions (leaves, cartesian_product, brace_expand, etc.) {{{1
 def _leaves(path, hidden=False):
-    try:
-        for each in os.scandir(path):
-            if each.is_dir(follow_symlinks=False):
-                for e in _leaves(each):
-                    if hidden or not e.startswith('.'):
-                        yield e
-            else:
-                if hidden or not each.name.startswith('.'):
-                    yield each.path
-    except (OSError, IOError) as e:
-        _os_error(e)
+    for each in os.scandir(path):
+        if each.is_dir(follow_symlinks=False):
+            for e in _leaves(each):
+                if hidden or not e.startswith('.'):
+                    yield e
+        else:
+            if hidden or not each.name.startswith('.'):
+                yield each.path
 
 # leaves()  {{{2
 def leaves(path, hidden=False):
@@ -688,10 +635,6 @@ class Cmd(object):
         self.process.kill()
         self.process.wait()
 
-    # render {{{3
-    def render(self, option_args=None, width=70):
-        render_command(self.cmd, option_args=option_args, width=width)
-
     # __str__ {{{3
     def __str__(self):
         if is_str(self.cmd):
@@ -825,20 +768,62 @@ class _Accept(object):
             return status < 0 or status > self.accept
 
 
+# run (deprecated) {{{2
+def run(cmd, stdin=None, accept=0, shell=False):
+    "Run a command without capturing its output."
+    import subprocess
+
+    # I have never been able to get Popen to work properly if cmd is not
+    # a string when using the shell
+    if shell and not is_str(cmd):
+        cmd = ' '.join(to_str(c) for c in cmd)
+    elif is_str(cmd) and not shell:
+        cmd = cmd.split()
+
+    streams = {} if stdin is None else {'stdin': subprocess.PIPE}
+    process = subprocess.Popen(cmd, shell=shell, **streams)
+    if stdin is not None:
+        process.stdin.write(stdin.encode(DEFAULT_ENCODING))
+        process.stdin.close()
+    status = process.wait()
+    if _Accept(accept).unacceptable(status):
+        raise OSError(None, "unexpected exit status (%d)." % status)
+    return status
+
+# sh (deprecated) {{{2
+def sh(cmd, stdin=None, accept=0, shell=True):
+    "Execute a command with a shell without capturing its output"
+    return run(cmd, stdin, accept, shell=True)
+
+
+# bg (deprecated) {{{2
+def bg(cmd, stdin=None, shell=False):
+    "Execute a command in the background without capturing its output."
+    import subprocess
+    streams = {'stdin': subprocess.PIPE} if stdin is not None else {}
+    process = subprocess.Popen(cmd, shell=shell, **streams)
+    if stdin is not None:
+        process.stdin.write(stdin.encode(DEFAULT_ENCODING))
+        process.stdin.close()
+    return process.pid
+
+# shbg (deprecated) {{{2
+def shbg(cmd, stdin=None, shell=True):
+    "Execute a command with a shell in the background without capturing its output."
+    return bg(cmd, stdin, shell=True)
+
+
 # which {{{2
 def which(name, path=None, flags=os.X_OK):
     "Search PATH for executable files with the given name."
-    try:
-        result = []
-        if path is None:
-            path = os.environ.get('PATH', '')
-        for p in path.split(os.pathsep):
-            p = os.path.join(p, name)
-            if os.access(p, flags):
-                result.append(p)
-        return result
-    except (OSError, IOError) as e:
-        _os_error(e)
+    result = []
+    if path is None:
+        path = os.environ.get('PATH', '')
+    for p in path.split(os.pathsep):
+        p = os.path.join(p, name)
+        if os.access(p, flags):
+            result.append(p)
+    return result
 
 # render_command {{{2
 def render_command(cmd, option_args=None, width=70):

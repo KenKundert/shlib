@@ -594,8 +594,7 @@ as keyword arguments.
 the exit status from a command is not acceptable. If this not given or is False, 
 an OSError is raised instead.  Use of this preference requires that *Inform* be 
 available.  If *use_inform* is True, then inform.Error() is used by *Cmd* and 
-its subclasses (*Run* and *Start*). If *use_inform* is "all", then 
-inform.Error() is used by all *shlib* functions and classes.
+its subclasses (*Run* and *Start*).
 
 *log_cmd* specifies that the command and its exit status should be written to 
 the *Inform* log file.  Use of this preference requires that *Inform* be 
