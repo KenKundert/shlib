@@ -7,6 +7,7 @@ rm -f *.pyc *.pyo .test*.sum expected result install.out
 rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html .eggs htmlcov
 rm -f tests/{helloworld,test,ref}
 rm -f TEST REF
+rm -rf tests/.pytest_cache */__pycache__
 foreach i (*/clean)
     if ($i == "*/clean") break
     #echo $i
