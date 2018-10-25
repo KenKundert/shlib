@@ -294,6 +294,20 @@ Examples::
    tmp_mutt = lsf('/tmp/', select='mutt-*')
 
 
+File Permissions
+~~~~~~~~~~~~~~~~
+
+Change the file permissiongs of a file, or files, or directory, or directories::
+
+   chmod(mode, path)
+
+where *mode* is a three digit octal number.
+
+You may read the permissions of a file or directory using::
+
+   mode = getmod(path)
+
+
 Paths
 -----
 

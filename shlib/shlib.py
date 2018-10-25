@@ -260,6 +260,11 @@ def chmod(mode, *paths):
     for path in to_paths(paths):
         path.chmod(mode)
 
+# getmod {{{2
+def getmod(path):
+    "Return the permission bits for a file or directory"
+    return os.stat(str(path)).st_mode & 0o777
+
 # ls {{{2
 def ls(*paths, **kwargs):
     """
@@ -521,7 +526,7 @@ class Cmd(object):
             cmd = [str(c) for c in self.cmd]
         if _use_log(self.log):
             from inform import log
-            log('Running:', render_command(cmd, option_args=self.option_args))
+            log('running:', render_command(cmd, option_args=self.option_args))
 
         # indicate streams to intercept
         streams = {}
@@ -535,9 +540,20 @@ class Cmd(object):
             streams['stderr'] = subprocess.STDOUT
 
         # run the command
-        process = subprocess.Popen(
-            cmd, shell=self.use_shell, env=self.env, **streams
-        )
+        try:
+            process = subprocess.Popen(
+                cmd, shell=self.use_shell, env=self.env, **streams
+            )
+        except OSError as e:
+            if preferences.get('use_inform'):
+                from inform import Error
+                raise Error(
+                    msg = os_error(e),
+                    cmd = render_command(self.cmd),
+                    template = '{msg}'
+                )
+            else:
+                raise
 
         # store needed information and wait for termination if desired
         self.pid = process.pid
@@ -562,7 +578,7 @@ class Cmd(object):
             cmd = self.cmd
         if _use_log(self.log):
             from inform import log
-            log('Running:', render_command(cmd, option_args=self.option_args))
+            log('running:', render_command(cmd, option_args=self.option_args))
 
         if self.save_stdout or self.save_stderr:
             try:
@@ -612,7 +628,7 @@ class Cmd(object):
 
         if _use_log(self.log):
             from inform import log
-            log('Exit status:', self.status)
+            log('exit status:', self.status)
 
         # check return code
         if self.accept.unacceptable(self.status):
