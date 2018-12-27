@@ -236,6 +236,29 @@ def mkdir(*paths):
             if err.errno != errno.EEXIST or path.is_file():
                 raise
 
+# mount/umount {{{2
+class mount:
+
+    def __init__(self, path):
+        self.path = to_path(path)
+        self.mounted_externally = is_mounted(self.path)
+
+        if not self.mounted_externally:
+            Run(['mount', self.path])
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if not self.mounted_externally:
+            umount(self.path)
+
+def umount(path):
+    Run(['umount', path])
+
+def is_mounted(path):
+    return Run(['mountpoint', '-q', path], '0,1').status == 0
+
 # cd {{{2
 class cd:
     def __init__(self, path):
