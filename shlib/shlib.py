@@ -1,4 +1,4 @@
-# scripts -- Scripting utilities
+# shlib -- Scripting utilities
 #
 # A light-weight package with few dependencies that allows users to do 
 # shell-script like things relatively easily in Python.
@@ -890,8 +890,8 @@ def render_command(cmd, option_args=None, width=70):
     if is_str(cmd):
         components = split_cmd(cmd)
     else:
-        components = [quote_arg(c) for c in cmd]
-        cmd = ' '.join(components)
+        components = cmd.copy()
+        cmd = ' '.join(str(c) for c in components)
     if len(cmd) <= width:
         return cmd
 
