@@ -7,7 +7,7 @@ from .shlib import (
     is_str, is_iterable, is_collection, to_path, to_paths,
 
     # preferences
-    set_prefs,
+    set_prefs, get_state, set_state,
 
     # filesystem utilities
     cp, mv, rm, ln, touch, mkdir, mount, umount, is_mounted, cd, cwd, chmod, ls, lsd, lsf,
