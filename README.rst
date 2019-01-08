@@ -1,8 +1,8 @@
 ShLib - Shell Library
 =====================
 
-| Version: 0.8.5
-| Released: 2018-12-28
+| Version: 0.8.6
+| Released: 2019-01-08
 |
 
 .. image:: https://img.shields.io/travis/KenKundert/shlib/master.svg
