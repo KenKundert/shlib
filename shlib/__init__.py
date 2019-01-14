@@ -10,7 +10,8 @@ from .shlib import (
     set_prefs, get_state, set_state,
 
     # filesystem utilities
-    cp, mv, rm, ln, touch, mkdir, mount, umount, is_mounted, cd, cwd, chmod, ls, lsd, lsf,
+    cp, mv, rm, ln, touch, mkdir, mount, umount, is_mounted, cd, cwd,
+    chmod, getmod, ls, lsd, lsf,
 
     # path expansion utilities
     leaves, cartesian_product, brace_expand,
