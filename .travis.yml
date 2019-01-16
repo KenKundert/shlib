@@ -26,5 +26,3 @@ deploy:
         tags: true
 after_success:
   - coveralls
-
-

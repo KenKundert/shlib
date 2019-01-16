@@ -1,10 +1,6 @@
 ShLib - Shell Library
 =====================
 
-| Version: 1.0.0
-| Released: 2019-01-13
-|
-
 .. image:: https://img.shields.io/travis/KenKundert/shlib/master.svg
     :target: https://travis-ci.org/KenKundert/shlib
 
@@ -16,6 +12,10 @@ ShLib - Shell Library
 
 .. image:: https://img.shields.io/pypi/pyversions/shlib.svg
     :target: https://pypi.python.org/pypi/shlib/
+
+:Author: Ken Kundert
+:Version: 1.0.0
+:Released: 2019-01-13
 
 A light-weight package with few dependencies that allows users to do 
 shell-script like things relatively easily in Python. Is a natural complement to 
