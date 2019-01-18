@@ -82,9 +82,9 @@ def to_str(path):
     # string.
     return str(to_path(path))
 
-# os_error {{{2
+# raise_os_error {{{2
 # Raise an error based on the errno.
-def os_error(errno, filename=None):
+def raise_os_error(errno, filename=None):
     if filename:
         raise OSError(errno, os.strerror(errno), str(filename))
     else:
@@ -162,10 +162,10 @@ def cp(*paths):
                 shutil.copy2(to_str(src), to_str(dest))
         return
     if len(srcs) > 1:
-        os_error(errno.ENOTDIR, dest)
+        raise_os_error(errno.ENOTDIR, dest)
     src = srcs[0]
     if src.is_dir() and dest.is_file():
-        os_error(errno.EISDIR, src)
+        raise_os_error(errno.EISDIR, src)
     if src.is_dir():
         # src is directory and dest does not exist
         shutil.copytree(to_str(src), to_str(dest))
@@ -186,11 +186,11 @@ def mv(*paths):
         return
     else:
         if len(srcs) > 1:
-            os_error(errno.ENOTDIR, dest)
+            raise_os_error(errno.ENOTDIR, dest)
     src = srcs[0]
     if dest.is_file():
         if src.is_dir():
-            os_error(errno.EISDIR, src)
+            raise_os_error(errno.EISDIR, src)
         else:
             # overwrite destination
             shutil.move(to_str(src), to_str(dest))
@@ -583,7 +583,7 @@ class Cmd(object):
             )
         except OSError as e:
             if PREFERENCES['use_inform']:
-                from inform import Error
+                from inform import Error, os_error
                 raise Error(
                     msg = os_error(e),
                     cmd = render_command(self.cmd),
