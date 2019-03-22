@@ -8,7 +8,7 @@ with open('README.rst') as f:
 
 setup(
     name='shlib',
-    version='1.0.2',
+    version='1.1.0',
     description='shell library',
     long_description=readme,
     author="Ken Kundert",
