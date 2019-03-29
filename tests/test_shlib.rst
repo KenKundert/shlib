@@ -1,1 +1,1 @@
-../shlib.py
+../shlib/shlib.py
