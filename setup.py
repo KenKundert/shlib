@@ -40,7 +40,8 @@ setup(
         'Programming Language :: Python :: 2.7',
         #'Programming Language :: Python :: 3.3',
         #    should work, but is no longer tested
-        'Programming Language :: Python :: 3.4',
+        #'Programming Language :: Python :: 3.4',
+        #    should work, but is no longer tested
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
