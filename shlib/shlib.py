@@ -237,7 +237,7 @@ def rm(*paths):
 def ln(src, dest):
     "Create symbolic link."
     dest = to_path(dest)
-    dest.symlink_to(src)
+    dest.symlink_to(to_path(src))
 
 
 # touch {{{2
@@ -979,7 +979,7 @@ def render_command(cmd, option_args=None, width=70):
     if is_str(cmd):
         components = split_cmd(cmd)
     else:
-        components = cmd[:]
+        components = list(cmd[:])
         cmd = ' '.join(str(c) for c in components)
     if len(cmd) <= width:
         return cmd
