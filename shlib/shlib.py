@@ -19,8 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see [http://www.gnu.org/licenses/].
 
-__version__ = '1.1.0'
-__released__ = '2019-03-21'
+__version__ = '1.1.1'
+__released__ = '2019-12-13'
 
 # Imports {{{1
 try:
