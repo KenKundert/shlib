@@ -1,7 +1,7 @@
 # shlib -- Scripting utilities
 #
 # A light-weight package with few dependencies that allows users to do
-# shell-script like things relatively easily in Python.
+# shell-script-like things relatively easily in Python.
 
 # License {{{1
 # Copyright (C) 2016-2019 Kenneth S. Kundert
@@ -681,9 +681,20 @@ class Cmd(object):
             streams['stderr'] = DEVNULL
 
         # run the command
-        process = subprocess.Popen(
-            cmd, shell=self.use_shell, env=self.env, **streams
-        )
+        try:
+            process = subprocess.Popen(
+                cmd, shell=self.use_shell, env=self.env, **streams
+            )
+        except OSError as e:
+            if PREFERENCES['use_inform']:
+                from inform import Error, os_error
+                raise Error(
+                    msg = os_error(e),
+                    cmd = render_command(self.cmd),
+                    template = '{msg}'
+                )
+            else:
+                raise
 
         # store needed information and wait for termination if desired
         self.pid = process.pid
