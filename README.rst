@@ -329,6 +329,19 @@ methods for the path.
    >>> str(path)
    'A/b/3'
 
+*to_path* returns a Path object that has been extended from the standard Python 
+pathlib Path object.  Specifically, it includes the following methods::
+
+   p.is_readable()   -- return True if path is readable
+   p.is_writable()   -- return True if path is writable
+   p.is_executable() -- return True if path is executable
+   p.is_hidden()     -- return True if path is hidden (name starts with .)
+   p.is_newer()      -- return True if path is newer than argument
+   p.path_from()     -- differs from relative_to() in that returned path will not start with ..
+   p.sans_ext()      -- return full path without the extension
+
+See `extended_pathlib <https://github.com/KenKundert/extended_pathlib`_ for more 
+information.
 
 Cartesian Product
 ~~~~~~~~~~~~~~~~~
