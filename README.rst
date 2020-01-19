@@ -340,8 +340,8 @@ pathlib Path object.  Specifically, it includes the following methods::
    p.path_from()     -- differs from relative_to() in that returned path will not start with ..
    p.sans_ext()      -- return full path without the extension
 
-See `extended_pathlib <https://github.com/KenKundert/extended_pathlib`_ for more 
-information.
+See `extended_pathlib <https://github.com/KenKundert/extended_pathlib>`_ for 
+more information.
 
 Cartesian Product
 ~~~~~~~~~~~~~~~~~
