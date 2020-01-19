@@ -18,10 +18,10 @@ install:
   - pip install coveralls
 script:
   - coverage run setup.py pytest
-deploy:
-    provider: pypi
-    user: shlib
-    on:
-        tags: true
+# deploy:
+#     provider: pypi
+#     user: shlib
+#     on:
+#         tags: true
 after_success:
   - coveralls
