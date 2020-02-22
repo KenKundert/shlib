@@ -1,10 +1,10 @@
-from shlib import to_path, mkdir, rm, touch
-import pytest
+from shlib import mkdir, rm, to_path, touch
+
 
 def test_rm_downturn():
     """remove existing file"""
     # setup
-    f1 = to_path('f1')
+    f1 = to_path("f1")
     touch(f1)
 
     # run test
@@ -12,11 +12,12 @@ def test_rm_downturn():
 
     # check
     assert not f1.exists()
+
 
 def test_rm_endorse():
     """remove nonexistent file"""
     # setup
-    f1 = to_path('f1')
+    f1 = to_path("f1")
 
     # run test
     rm(f1)
@@ -24,12 +25,13 @@ def test_rm_endorse():
     # check
     assert not f1.exists()
 
+
 def test_rm_ground():
     """remove two files"""
     # setup
-    f1 = to_path('f1')
+    f1 = to_path("f1")
     touch(f1)
-    f2 = to_path('f2')
+    f2 = to_path("f2")
     touch(f2)
 
     # run test
@@ -39,14 +41,15 @@ def test_rm_ground():
     assert not f1.exists()
     assert not f2.exists()
 
+
 def test_rm_cymbal():
     """remove directory"""
     # setup
-    d1 = to_path('d1')
+    d1 = to_path("d1")
     mkdir(d1)
-    d1f1 = to_path('d1/f1')
+    d1f1 = to_path("d1/f1")
     touch(d1f1)
-    f2 = to_path('f2')
+    f2 = to_path("f2")
     touch(f2)
 
     # run test

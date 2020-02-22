@@ -1,12 +1,13 @@
-from shlib import to_path, ln, mkdir, rm, touch
 import pytest
+from shlib import ln, mkdir, rm, to_path, touch
+
 
 def test_ln_downturn():
     """link an existing file"""
     # setup
-    f1 = to_path('f1')
+    f1 = to_path("f1")
     touch(f1)
-    f2 = to_path('f2')
+    f2 = to_path("f2")
 
     # run test
     ln(f1, f2)
@@ -15,16 +16,17 @@ def test_ln_downturn():
     assert f1.is_file()
     assert f2.is_file()
     assert f2.is_symlink()
-    #assert f1.samefile(f2)
+    # assert f1.samefile(f2)
 
     # cleanup
     rm(f1, f2)
 
+
 def test_ln_endorse():
     """link a nonexistent file"""
     # setup
-    f1 = to_path('f1')
-    f2 = to_path('f2')
+    f1 = to_path("f1")
+    f2 = to_path("f2")
 
     # run test
     ln(f1, f2)
@@ -35,12 +37,13 @@ def test_ln_endorse():
     # cleanup
     rm(f1, f2)
 
+
 def test_ln_ground():
     """link to a pre-existing name"""
     # setup
-    f1 = to_path('f1')
+    f1 = to_path("f1")
     touch(f1)
-    f2 = to_path('f2')
+    f2 = to_path("f2")
     touch(f2)
 
     # run test
@@ -50,12 +53,13 @@ def test_ln_ground():
     # cleanup
     rm(f1, f2)
 
+
 def test_ln_cymbal():
     """link an existing directory"""
     # setup
-    d1 = to_path('d1')
+    d1 = to_path("d1")
     mkdir(d1)
-    d2 = to_path('d2')
+    d2 = to_path("d2")
 
     # run test
     ln(d1, d2)
@@ -64,8 +68,7 @@ def test_ln_cymbal():
     assert d1.is_dir()
     assert d2.is_dir()
     assert d2.is_symlink()
-    #assert d1.samefile(d2)
+    # assert d1.samefile(d2)
 
     # cleanup
     rm(d1, d2)
-

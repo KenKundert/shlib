@@ -1,10 +1,11 @@
-from shlib import to_path, mkdir, rm, touch
 import pytest
+from shlib import mkdir, rm, to_path, touch
+
 
 def test_mkdir_downturn():
     """make a directory"""
     # setup
-    d1 = to_path('d1')
+    d1 = to_path("d1")
 
     # run test
     mkdir(d1)
@@ -15,11 +16,12 @@ def test_mkdir_downturn():
     # cleanup
     rm(d1)
 
+
 def test_mkdir_endorse():
     """make two directories"""
     # setup
-    d1 = to_path('d1')
-    d2 = to_path('d2')
+    d1 = to_path("d1")
+    d2 = to_path("d2")
 
     # run test
     mkdir(d1, d2)
@@ -31,11 +33,12 @@ def test_mkdir_endorse():
     # cleanup
     rm(d1, d2)
 
+
 def test_mkdir_ground():
     """make two directories"""
     # setup
-    d1 = to_path('d1')
-    d2 = to_path('d2')
+    d1 = to_path("d1")
+    d2 = to_path("d2")
 
     # run test
     mkdir([d1, d2])
@@ -47,10 +50,11 @@ def test_mkdir_ground():
     # cleanup
     rm(d1, d2)
 
+
 def test_mkdir_cymbal():
     """attempt to make a directory over an existing file"""
     # setup
-    f1 = to_path('f1')
+    f1 = to_path("f1")
     touch(f1)
 
     # run test
@@ -60,10 +64,11 @@ def test_mkdir_cymbal():
     # cleanup
     rm(f1)
 
+
 def test_mkdir_gathering():
     """attempt to make a directory over an existing file"""
     # setup
-    d1 = to_path('d1')
+    d1 = to_path("d1")
     mkdir(d1)
 
     # run test
@@ -75,10 +80,11 @@ def test_mkdir_gathering():
     # cleanup
     rm(d1)
 
+
 def test_mkdir_solstice():
     """attempt to make a directory and it parent directories"""
     # setup
-    d1d1 = to_path('d1/d1')
+    d1d1 = to_path("d1/d1")
 
     # run test
     mkdir(d1d1)
@@ -89,10 +95,11 @@ def test_mkdir_solstice():
     # cleanup
     rm(d1d1)
 
+
 def test_mkdir_brain():
     """attempt to make a directory over an existing directory"""
     # setup
-    d1d1 = to_path('d1/d1')
+    d1d1 = to_path("d1/d1")
     mkdir(d1d1)
 
     # run test
