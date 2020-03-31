@@ -187,6 +187,7 @@ strings.
 
    >>> rm(testdir)
 
+
 Link (ln)
 ~~~~~~~~~~~
 
@@ -229,12 +230,44 @@ Change to an existing directory::
 
 Makes path the current working directory.
 
-May also be used in a with block::
+May also be used in a *with* block::
 
    with cd(path):
        cwd()
 
-The working directory returns to its original value upon leaving the with block.
+The working directory returns to its original value upon leaving the *with* 
+block.
+
+
+Current Working Directory (cwd)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Returns the current working directory::
+
+   path = cwd()
+
+
+Mount and Unmount a Filesystem (mount)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Mount a filesystem with::
+
+   mount(path)
+
+Then unmount it with::
+
+   umount(path)
+
+You can test to determine if a filesystem is mounted with::
+
+   is_mounted(path)
+
+May also be used in a *with* block::
+
+   with mount(path):
+       cp(path/data, '.')
+
+The filesystem is unmounted upon leaving the *with* block.
 
 
 List Directory (ls, lsd, lsf)
@@ -332,16 +365,27 @@ methods for the path.
 *to_path* returns a Path object that has been extended from the standard Python 
 pathlib Path object.  Specifically, it includes the following methods::
 
-   p.is_readable()   -- return True if path is readable
-   p.is_writable()   -- return True if path is writable
-   p.is_executable() -- return True if path is executable
-   p.is_hidden()     -- return True if path is hidden (name starts with .)
-   p.is_newer()      -- return True if path is newer than argument
+   p.is_readable()   -- return True if path exists and is readable
+   p.is_writable()   -- return True if path exists and is writable
+   p.is_executable() -- return True if path exists and is executable
+   p.is_hidden()     -- return True if path exists and is hidden (name starts with .)
+   p.is_newer()      -- return True if path exists and is newer than argument
    p.path_from()     -- differs from relative_to() in that returned path will not start with ..
    p.sans_ext()      -- return full path without the extension
 
 See `extended_pathlib <https://github.com/KenKundert/extended_pathlib>`_ for 
 more information.
+
+
+Leaves
+~~~~~~
+
+Recursively descend into a directory yielding paths to all of the files it 
+contains. Normally hidden files are excluded unless the *hidden* argument is 
+True.  OSErrors found during the scan are ignored unless the *report* argument 
+is specified, and if specified it must be a function that takes one argument, 
+the exception raised by the error.
+
 
 Cartesian Product
 ~~~~~~~~~~~~~~~~~
@@ -410,7 +454,7 @@ A class that runs an external program::
 using a single letter, with upper case enabling the option and lower case 
 disabling it:
 
-   |  S, s: Use, or do not use, shell
+   |  S, s: Use, or do not use, a shell
    |  O, o: Capture, or do not capture, stdout
    |  E, e: Capture, or do not capture, stderr
    |  M, m: Merge, or do not merge, stderr into stdout (M overrides E, e)
@@ -532,11 +576,11 @@ or by calling wait().  For example::
    >>> echo.status
    0
 
-   >>> cat = Run(['cat', 'helloworld'], 'sOew')
-   >>> cat.wait()
+   >>> echo = Run(['echo', 'helloworld'], 'sOew')
+   >>> echo.wait()
    0
 
-   >>> print(cat.stdout)
+   >>> print(echo.stdout)
    hello world
 
 
