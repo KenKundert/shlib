@@ -8,25 +8,25 @@ with open("README.rst", encoding="utf-8") as f:
     readme = f.read()
 
 setup(
-    name="shlib",
-    version="1.2.1",
-    description="shell library",
-    long_description=readme,
-    author="Ken Kundert",
-    author_email="shlib@nurdletech.com",
-    packages=["shlib"],
-    url="https://nurdletech.com/linux-utilities/shlib",
-    download_url="https://github.com/kenkundert/shlib/tarball/master",
-    license="GPLv3+",
-    zip_safe=True,
-    install_requires=[
+    name = "shlib",
+    version = "1.2.1",
+    description = "shell library",
+    long_description = readme,
+    author = "Ken Kundert",
+    author_email = "shlib@nurdletech.com",
+    packages = ["shlib"],
+    url = "https://nurdletech.com/linux-utilities/shlib",
+    download_url = "https://github.com/kenkundert/shlib/tarball/master",
+    license = "GPLv3+",
+    zip_safe = False,
+    install_requires = [
         "braceexpand",  # this one is optional
         "inform",  # this one is optional
     ],
-    setup_requires=["pytest-runner>=2.0"],
-    tests_require=["pytest", "inform"],
-    keywords=["shlib", "shell", "utilities"],
-    classifiers=[
+    setup_requires = ["pytest-runner>=2.0"],
+    tests_require = ["pytest", "inform"],
+    keywords = ["shlib", "shell", "utilities"],
+    classifiers = [
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
