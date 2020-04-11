@@ -580,8 +580,8 @@ or by calling wait().  For example::
    >>> echo.wait()
    0
 
-   >>> print(echo.stdout)
-   hello world
+   >>> print(echo.stdout.strip())
+   helloworld
 
 
 Start
