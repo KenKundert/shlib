@@ -1,27 +1,22 @@
 language: python
-matrix:
+install:
+  - pip install .
+  - pip install --upgrade coveralls pytest pytest-cov
+script:
+  - coverage run setup.py pytest
+jobs:
   include:
     - python: 2.7
     - python: 3.5
     - python: 3.6
     - python: 3.7
-      dist: xenial
-      sudo: true
     - python: 3.8
-      dist: xenial
-      sudo: true
+    - python: 3.9
+    - python: 3.10-dev
     - python: nightly
-      dist: xenial
-      sudo: true
-install:
-  - pip install .
-  - pip install coveralls
-script:
-  - coverage run setup.py pytest
-# deploy:
-#     provider: pypi
-#     user: shlib
-#     on:
-#         tags: true
+  allow_failures:
+    - python: 3.10-dev
+    - python: nightly
+  fast_finish: true
 after_success:
   - coveralls
