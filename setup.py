@@ -9,7 +9,7 @@ with open("README.rst", encoding="utf-8") as f:
 
 setup(
     name = "shlib",
-    version = "1.2.1",
+    version = "1.2.2",
     description = "shell library",
     long_description = readme,
     author = "Ken Kundert",
