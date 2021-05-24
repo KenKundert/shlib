@@ -1,7 +1,7 @@
 # pathlib -- extends system pathlib
 
 # License {{{1
-# Copyright (C) 2016-2020 Kenneth S. Kundert
+# Copyright (C) 2016-2021 Kenneth S. Kundert
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ from pathlib import Path, PosixPath
 import six
 
 # Globals {{{1
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
 
 # is_readable {{{1

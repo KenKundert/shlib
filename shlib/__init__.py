@@ -17,8 +17,8 @@ from .shlib import (
     leaves, cartesian_product, brace_expand,
 
     # execution utilities
-    Cmd, Run, Start, which, split_cmd, quote_arg, render_command
+    Cmd, Run, Start, which, split_cmd, quote_arg, render_command,
 
     # deprecated execution utilities
-    # run, sh, bg, shbg
+    run, sh, bg, shbg,
 )
