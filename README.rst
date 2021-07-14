@@ -1,6 +1,9 @@
 ShLib - Shell Library
 =====================
 
+.. image:: https://pepy.tech/badge/shlib/month
+    :target: https://pepy.tech/project/shlib
+
 .. image:: https://img.shields.io/travis/KenKundert/shlib/master.svg
     :target: https://travis-ci.org/KenKundert/shlib
 
