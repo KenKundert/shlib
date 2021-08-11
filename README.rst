@@ -462,7 +462,7 @@ disabling it:
    |  O, o: Capture, or do not capture, stdout
    |  E, e: Capture, or do not capture, stderr
    |  M, m: Merge, or do not merge, stderr into stdout (M overrides E, e)
-   |  W, s: Wait, or do not wait, for command to terminate before proceeding
+   |  W, w: Wait, or do not wait, for command to terminate before proceeding
 
 If a letter corresponding to a particular option is not specified, the default 
 is used for that option.  In addition, one of the following may be given, and it 
@@ -703,3 +703,13 @@ available to insert into an error message. For example::
 If command returns a non-zero exit status, an exception is raised and one of two 
 error messages are printed. The first is printed if *stderr* is not empty, and 
 the second is printed if it is.
+
+Most other functions raise an OSError upon an error.  You can use *Inform* to 
+convert this exception into a reasonable error message::
+
+    >> from inform import fatal, os_error
+    >>
+    >> try:
+    ..    cp(from, to)
+    .. except OSError as e:
+    ..    fatal(os_error(e))
