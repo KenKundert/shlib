@@ -5,6 +5,8 @@ install.out
 .eggs
 .hypothesis
 tests/.hypothesis
+TEST
+REF
 
 # Packages
 *.egg
