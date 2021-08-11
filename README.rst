@@ -1,4 +1,4 @@
-ShLib - Shell Library
+ShLib — Shell Library
 =====================
 
 .. image:: https://pepy.tech/badge/shlib/month
