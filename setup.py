@@ -12,6 +12,7 @@ setup(
     version = "1.3.0",
     description = "shell library",
     long_description = readme,
+    long_description_content_type = 'text/x-rst',
     author = "Ken Kundert",
     author_email = "shlib@nurdletech.com",
     packages = ["shlib"],
