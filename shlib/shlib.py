@@ -1018,12 +1018,12 @@ def render_command(cmd, option_args=None, width=70):
     bux --dux a b -d c d --tux e f g h
 
     >>> print(render_command('bux --dux a b -d c d --tux e f g h', args, width=0))
-    bux \
-        --dux a b \
-        -d c d \
-        --tux e \
-        f \
-        g \
+    bux \\
+        --dux a b \\
+        -d c d \\
+        --tux e \\
+        f \\
+        g \\
         h
 
     """
