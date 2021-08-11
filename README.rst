@@ -4,7 +4,7 @@ ShLib — Shell Library
 .. image:: https://pepy.tech/badge/shlib/month
     :target: https://pepy.tech/project/shlib
 
-..  image:: https://github.com/KenKundert//shlibactions/workflows/build.yaml/badge.svg
+..  image:: https://github.com/KenKundert/shlib/actions/workflows/build.yaml/badge.svg
     :target: https://github.com/KenKundert/shlib/actions/workflows/build.yaml
 
 
