@@ -19,7 +19,7 @@ setup(
     url = "https://nurdletech.com/linux-utilities/shlib",
     download_url = "https://github.com/kenkundert/shlib/tarball/master",
     license = "GPLv3+",
-    zip_safe = False,
+    zip_safe = True,
     install_requires = [
         "braceexpand",  # this one is optional
         "inform",  # this one is optional
