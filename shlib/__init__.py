@@ -1,5 +1,5 @@
-__version__ = '1.3.0'
-__released__ = '2021-08-10'
+__version__ = '1.3.1'
+__released__ = '2021-08-28'
 
 from .extended_pathlib import Path
 from .shlib import (
