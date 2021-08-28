@@ -222,7 +222,7 @@ def rm(*paths):
     "Remove files or directories (equivalent to rm -rf)"
     for path in to_paths(paths):
         try:
-            if path.is_dir():
+            if path.is_dir() and not path.is_symlink():
                 shutil.rmtree(to_str(path))
             else:
                 path.unlink()

@@ -22,7 +22,7 @@ setup(
     zip_safe = True,
     install_requires = [
         "braceexpand",  # this one is optional
-        "inform",  # this one is optional
+        "inform",       # this one is optional
     ],
     setup_requires = ["pytest-runner>=2.0"],
     tests_require = ["pytest", "inform"],
