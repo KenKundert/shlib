@@ -767,6 +767,16 @@ class Cmd(object):
                 raise OSError(None, msg)
         return self.status
 
+    # poll {{{3
+    def poll(self):
+        """
+        Check to see if process has completed.
+
+        Returns exit status if process is done, otherwise it return None.
+        """
+        return self.process.poll()
+
+
     # kill {{{3
     def kill(self):
         self.process.kill()
