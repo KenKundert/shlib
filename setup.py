@@ -24,8 +24,6 @@ setup(
         "braceexpand",  # this one is optional
         "inform",       # this one is optional
     ],
-    setup_requires = ["pytest-runner>=2.0"],
-    tests_require = ["pytest", "inform"],
     keywords = ["shlib", "shell", "utilities"],
     classifiers = [
         "Development Status :: 4 - Beta",
