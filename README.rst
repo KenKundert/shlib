@@ -18,8 +18,8 @@ ShLib — Shell Library
     :target: https://pypi.python.org/pypi/shlib/
 
 :Author: Ken Kundert
-:Version: 1.4.0
-:Released: 2021-11-10
+:Version: 1.5.0-beta.0
+:Released: 2022-08-31
 
 A light-weight package with few dependencies that allows users to do 
 shell-script like things relatively easily in Python. Is a natural complement to 
