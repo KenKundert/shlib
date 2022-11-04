@@ -1,4 +1,4 @@
-__version__ = '1.5.0b1-beta.0'
+__version__ = '1.5.0b1'
 __released__ = '2022-09-10'
 
 from .extended_pathlib import Path

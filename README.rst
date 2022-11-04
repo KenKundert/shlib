@@ -18,7 +18,7 @@ ShLib — Shell Library
     :target: https://pypi.python.org/pypi/shlib/
 
 :Author: Ken Kundert
-:Version: 1.5.0b1-beta.0
+:Version: 1.5.0b1
 :Released: 2022-09-10
 
 A light-weight package with few dependencies that allows users to do 
@@ -369,13 +369,13 @@ methods for the path.
 *to_path* returns a Path object that has been extended from the standard Python 
 pathlib Path object.  Specifically, it includes the following methods::
 
-   p.is_readable()   -- return True if path exists and is readable
-   p.is_writable()   -- return True if path exists and is writable
-   p.is_executable() -- return True if path exists and is executable
-   p.is_hidden()     -- return True if path exists and is hidden (name starts with .)
-   p.is_newer()      -- return True if path exists and is newer than argument
-   p.path_from()     -- differs from relative_to() in that returned path will not start with ..
-   p.sans_ext()      -- return full path without the extension
+   p.is_readable()   — return True if path exists and is readable
+   p.is_writable()   — return True if path exists and is writable
+   p.is_executable() — return True if path exists and is executable
+   p.is_hidden()     — return True if path exists and is hidden (name starts with .)
+   p.is_newer()      — return True if path exists and is newer than argument
+   p.path_from()     — differs from relative_to() in that returned path will not start with ..
+   p.sans_ext()      — return full path without the extension
 
 See `extended_pathlib <https://github.com/KenKundert/extended_pathlib>`_ for 
 more information.
