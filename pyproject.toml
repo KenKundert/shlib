@@ -1,0 +1,37 @@
+[project]
+name = "shlib"
+version = "1.5"
+description = "shell library"
+readme = "README.rst"
+dependencies = [
+    "braceexpand",   # optional
+    "inform>=1.28",  # optional
+]
+requires-python = ">=3.6"
+keywords = [
+    "shlib",
+    "shell",
+    "shell utilities",
+]
+authors = [
+    {name = "Ken Kundert"},
+    {email = "shlib@nurdletech.com"}
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Natural Language :: English",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+homepage = "https://github.com/kenkundert/shlib"
+documentation = "https://github.com/kenkundert/shlib"
+repository = "https://github.com/kenkundert/shlib"
+
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
