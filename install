@@ -1,4 +1,4 @@
 #!/bin/sh
-pip --quiet install --user --upgrade .
+pip --quiet install --upgrade .
 
 rm -rf build dist *.egg-info
