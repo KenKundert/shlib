@@ -146,6 +146,24 @@ def _sans_ext(path):
 
 PosixPath.sans_ext = _sans_ext
 
+# humanize {{{1
+def _humanize(path):
+    """
+    render path to a human-optimized string.
+    convert to relative path or replace home dir with a ~ if subdir.
+    """
+    try:
+        return str(path.relative_to(Path.cwd()))
+    except ValueError as e:
+        pass
+    try:
+        return '~/' + str(path.relative_to(Path('~').expanduser()))
+    except ValueError as e:
+        pass
+    return str(path)
+
+PosixPath.humanize = _humanize
+
 # Python 3.5 extensions {{{1
 if sys.version_info < (3, 5):
 
