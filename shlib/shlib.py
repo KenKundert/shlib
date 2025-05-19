@@ -382,6 +382,9 @@ def ls(*paths, **kwargs):
         return True
 
     select = to_str(select)
+    if select.endswith("**"):
+        # Add trailing slash to match only directories. See #4.
+        select += "/"
     retain_hidden = select.startswith(".") if hidden is None else hidden
     paths = paths if paths else ["."]
     for path in to_paths(paths):
