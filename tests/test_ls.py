@@ -244,7 +244,7 @@ def test_ls_contrast():
     touch(d1d2f2)
 
     # run test
-    paths = ls(d1, select="**")
+    paths = ls(d1, select="**", only="dir")
 
     # check
     assert set(str(f) for f in paths) == set(["d1", "d1/d1", "d1/d2"])
