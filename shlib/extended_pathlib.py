@@ -154,11 +154,11 @@ def _humanize(path):
     """
     try:
         return str(path.relative_to(Path.cwd()))
-    except ValueError as e:
+    except ValueError:
         pass
     try:
         return '~/' + str(path.relative_to(Path('~').expanduser()))
-    except ValueError as e:
+    except ValueError:
         pass
     return str(path)
 

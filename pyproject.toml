@@ -35,3 +35,13 @@ repository = "https://github.com/kenkundert/shlib"
 [build-system]
 requires = ["flit_core >=2,<4"]
 build-backend = "flit_core.buildapi"
+
+[tool.ruff]
+exclude = [".tox", "doc", "tests", "Diffs"]
+
+[tool.ruff.lint]
+select = ["F"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"shlib/__init__.py" = ["F401"]  # imported but unused

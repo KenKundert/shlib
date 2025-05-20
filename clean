@@ -4,7 +4,7 @@ set nonomatch
 
 # the rest is common to all python directories
 rm -f *.pyc *.pyo .test*.sum expected result install.out
-rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html .eggs htmlcov
+rm -rf build *.egg-info dist __pycache__ .coverage .coverage-html .eggs htmlcov .tox
 rm -rf .pytest_cache
 rm -f tests/{helloworld,test,ref}
 rm -f TEST REF helloworld
