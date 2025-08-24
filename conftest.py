@@ -1,6 +1,8 @@
-def pytest_ignore_collect(path):
-    if str(path).endswith('extended_pathlib.py'):
-        return True
-    if str(path).endswith('test.clones.py'):
-        return True
+to_ignore = {
+    'extended_pathlib.py',
+    'test.clones.py',
+}
 
+def pytest_ignore_collect(collection_path, config):
+    if collection_path.name in to_ignore:
+        return True
