@@ -1,4 +1,4 @@
-__version__ = '1.7.1'
+__version__ = '1.8'
 __released__ = '2025-08-24'
 
 from .extended_pathlib import Path

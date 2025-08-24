@@ -24,7 +24,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-__version__ = "1.7.1"
+__version__ = "1.8"
 __released__ = "2025-08-24"
 
 # Imports {{{1
