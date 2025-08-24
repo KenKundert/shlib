@@ -14,3 +14,4 @@ foreach i (*/clean)
     #echo $i
     (cd $i:h; ./clean)
 end
+rm -rf .ruff_cache tests/.hypothesis
