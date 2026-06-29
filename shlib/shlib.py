@@ -4,25 +4,7 @@
 # shell-script-like things relatively easily in Python.
 
 # MIT License {{{1
-# Copyright (C) 2016-2025 Kenneth S. Kundert
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# Copyright (C) 2016-2026 Kenneth S. Kundert
 
 __version__ = "1.8"
 __released__ = "2025-08-24"
@@ -340,7 +322,8 @@ def ls(*paths, **kwargs):
             matched from the right (see pathlib match function).  If an absolute
             path is given the entire path must match.
         only:
-            Specifies the type of returned paths, choose from 'file' or 'dir'.
+            Specifies the type of returned paths, choose from 'file', 'dir' or 
+            'socket'.
         hidden (bool):
             Specifies whether hidden files should be returned, if not given
             hidden files are returned if select string starts with '.'.
@@ -379,6 +362,8 @@ def ls(*paths, **kwargs):
         if only == "file" and not path.is_file():
             return False
         if only == "dir" and not path.is_dir():
+            return False
+        if only == "socket" and not path.is_socket():
             return False
         if not retain_hidden and path.name.startswith("."):
             return False

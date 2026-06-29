@@ -33,7 +33,7 @@ documentation = "https://github.com/kenkundert/shlib"
 repository = "https://github.com/kenkundert/shlib"
 
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=2"]
 build-backend = "flit_core.buildapi"
 
 [tool.ruff]
